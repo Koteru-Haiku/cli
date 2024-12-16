@@ -9,8 +9,8 @@ const program = new Command();
 
 program
   .name('chx-cli')
-  .description('Một công cụ CLI tùy chỉnh cho các tác vụ đặc biệt.')
-  .version('1.0.4', '-v, --version', 'Hiển thị phiên bản hiện tại của chx-cli');
+  .description('A custom CLI tool for special tasks')
+  .version('1.0.4', '-v, --version', 'Show current version of chx-cli');
 
 program
   .command('qr')
