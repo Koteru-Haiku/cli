@@ -1,12 +1,15 @@
 import qrcode from 'qrcode';
 import readline from 'readline';
+import { handleAnswer } from '../Util/Handle.js'
 
 async function generateQRCode(text) {
   try {
     await qrcode.toFile('qrcode.png', text);
-    console.log('Mã QR đã được tạo và lưu tại qrcode.png');
+    return handleAnswer(true, "Mã QR đã được tạo và lưu tại qrcode.png", "");
+    // console.log('Mã QR đã được tạo và lưu tại qrcode.png');
   } catch (error) {
-    console.error('Lỗi khi tạo mã QR:', error);
+    return handleAnswer(false, "", "Lỗi khi tạo mã QR");
+    // console.error('Lỗi khi tạo mã QR:', error);
   }
 }
 
@@ -23,7 +26,8 @@ export function qrCommand() {
         rl.close();
       });
     } else if (action === 'N' || action === 'n') {
-      console.log('Quá trình tạo mã QR đã bị hủy.');
+      return handleAnswer(false, "", "Huỷ tạo mã QR");
+      // console.log('Quá trình tạo mã QR đã bị hủy.');
       rl.close();
     } else {
       console.log('Lựa chọn không hợp lệ');
