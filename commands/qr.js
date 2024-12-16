@@ -17,12 +17,12 @@ export function qrCommand() {
   });
 
   rl.question('Xác nhận tạo mã qr? (Y/N): ', (action) => {
-    if (action === 'Y') {
+    if (action === 'Y' || action === 'y') {
       rl.question('Nhập văn bản hoặc URL bạn muốn tạo mã QR: ', (text) => {
         generateQRCode(text);
         rl.close();
       });
-    } else if (action === 'N') {
+    } else if (action === 'N' || action === 'n') {
       console.log('Quá trình tạo mã QR đã bị hủy.');
       rl.close();
     } else {
