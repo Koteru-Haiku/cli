@@ -19,7 +19,7 @@ program
   .command('qr')
   .description('Tạo mã QR từ văn bản hoặc URL')
   .action(() => {
-    // CLI Menu để xác nhận và tạo mã QR
+    
     const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
