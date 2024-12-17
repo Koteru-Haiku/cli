@@ -4,6 +4,7 @@ import { Command } from 'commander';
 import { qrCommand } from './commands/qr.js'; 
 import { showVersion } from './commands/version.js';
 import { welcome } from './commands/info.js';
+import { generatePassword, Option } from './commands/password.js'
 
 const program = new Command();
 
@@ -31,6 +32,13 @@ program
   .description('')
   .action(() => {
     welcome();
+  })
+
+program
+  .command('password')
+  .description('Tạo mật khẩu ngẫu nhiên với các tùy chọn')
+  .action(() => {
+    Option();
   })
 
 program.parse(process.argv);
