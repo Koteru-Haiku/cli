@@ -1,12 +1,13 @@
 import fs from 'fs';
 import path from 'path';
+import { VERSION } from '../constants/version.js';
 
 export function showVersion() {
     try {
         const packageJson = JSON.parse(fs.readFileSync(path.resolve('package.json'), 'utf8'));
-        console.log(`chx-cli phiên bản: ${packageJson.version}`);
+        console.log(`chx-cli phiên bản: ${VERSION}`);
     }
     catch(error) {
-        console.log(`chx-cli phiên bản: 1.0.4`);
+        console.log(`chx-cli phiên bản: ${VERSION}`);
     }
 }
