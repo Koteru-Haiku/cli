@@ -7,7 +7,8 @@ import { createSpinner } from "nanospinner";
 
 export function welcome() {
     console.clear();
-    const msg = `Thank you for using my CLI`
+    const msg = `Thank you for using my CLI
+                      - Haiku Team -`
 
     figlet(msg, (err, data) => {
         console.log(gradient.pastel.multiline(data));
