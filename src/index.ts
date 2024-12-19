@@ -8,6 +8,10 @@ import { generatePassword, Option } from '../commands/password.js'
 import { VERSION } from '../constants/version.js';
 import { countFilesAndFolders } from '../commands/countfiles.js'
 
+import { readFile, saveFile } from "../Util/fileprocess.js";
+import { editFile } from "../commands/editFile.js";
+import readlineSync from "readline-sync";
+
 const program = new Command();
 
 program
@@ -17,14 +21,14 @@ program
 
 program
   .command('qr')
-  .description('Tạo mã QR từ văn bản hoặc URL')
+  .description('Generate QR code from text or URL')
   .action(() => {
     qrCommand();
   });  
 
 program
   .command('version')
-  .description('Hiển thị phiên bản của CLI')
+  .description('Show version of CLI')
   .action(() => {
     showVersion();
   });
@@ -38,16 +42,32 @@ program
 
 program
   .command('password')
-  .description('Tạo mật khẩu ngẫu nhiên với các tùy chọn')
+  .description('Generate random password with options')
   .action(() => {
     Option();
   })
 
 program
   .command("count <path>")
-  .description("Đếm files và folders")
+  .description("Count files and folders in a directory")
   .action(async (folderPath) => {
     await countFilesAndFolders(folderPath);
+  });
+
+  program
+  .command("edit")
+  .description("edit file")
+  .action(() => {
+    const filePath = readlineSync.question("Enter file path: ");
+    const content = readFile(filePath);
+    
+    console.log("=== File content ===");
+    content.forEach((line, index) => {
+      console.log(`${index + 1}: ${line}`);
+    });
+
+    const updatedContent = editFile(content);
+    saveFile(filePath, updatedContent);
   });
 
 program.parse(process.argv);

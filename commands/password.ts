@@ -13,7 +13,7 @@ export function generatePassword(length: number, useUpper: boolean, useLower: bo
   if (useSymbols) validChars += symbols;
 
   if (!validChars) {
-    console.error("Bạn phải chọn ít nhất một tùy chọn để tạo mật khẩu!");
+    console.error("You must select at least one option to create a password.!");
     process.exit(1);
   }
 
@@ -30,21 +30,21 @@ export async function Option() {
     {
       name: "length",
       type: "input",
-      message: "Độ dài mật khẩu bạn muốn là bao nhiêu?",
+      message: "What is the length of the password you want??",
       validate: (input) => {
         const parsed = parseInt(input, 10);
-        return parsed > 0 ? true : "Độ dài phải là số lớn hơn 0!";
+        return parsed > 0 ? true : "Length must be a number greater than 0!";
       },
     },
     {
       name: "options",
       type: "checkbox",
-      message: "Chọn các tùy chọn bao gồm:",
+      message: "Select options included:",
       choices: [
-        { name: "Chữ in hoa (A-Z)", value: "upper" },
-        { name: "Chữ thường (a-z)", value: "lower" },
-        { name: "Số (0-9)", value: "numbers" },
-        { name: "Ký tự đặc biệt (!@#$%^&*)", value: "symbols" },
+        { name: "Uppercase (A-Z)", value: "upper" },
+        { name: "Lowercase (a-z)", value: "lower" },
+        { name: "Number (0-9)", value: "numbers" },
+        { name: "Special characters (!@#$%^&*)", value: "symbols" },
       ],
     },
   ]);
@@ -56,6 +56,6 @@ export async function Option() {
   const useSymbols = answers.options.includes("symbols");
 
   const password = generatePassword(length, useUpper, useLower, useNumbers, useSymbols);
-  console.log(`\nMật khẩu của bạn: ${password}`);
+  console.log(`\nYour password is: ${password}`);
   // return password;
 }

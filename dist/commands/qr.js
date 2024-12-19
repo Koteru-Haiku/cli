@@ -4,11 +4,11 @@ import { handleAnswer } from '../Util/Handle.js';
 async function generateQRCode(text) {
     try {
         await qrcode.toFile('qrcode.png', text);
-        return handleAnswer(true, "Mã QR đã được tạo và lưu tại qrcode.png", "");
+        return handleAnswer(true, "QR code has been generated and saved at qrcode.png", "");
         // console.log('Mã QR đã được tạo và lưu tại qrcode.png');
     }
     catch (error) {
-        return handleAnswer(false, "", "Lỗi khi tạo mã QR");
+        return handleAnswer(false, "", "Error generating QR code");
         // console.error('Lỗi khi tạo mã QR:', error);
     }
 }
@@ -17,20 +17,20 @@ export function qrCommand() {
         input: process.stdin,
         output: process.stdout,
     });
-    rl.question('Xác nhận tạo mã qr? (Y/N): ', (action) => {
+    rl.question('Confirm QR code generation? (Y/N): ', (action) => {
         if (action === 'Y' || action === 'y') {
-            rl.question('Nhập văn bản hoặc URL bạn muốn tạo mã QR: ', (text) => {
+            rl.question('Enter the text or URL you want to generate the QR code for: ', (text) => {
                 generateQRCode(text);
                 rl.close();
             });
         }
         else if (action === 'N' || action === 'n') {
-            return handleAnswer(false, "", "Huỷ tạo mã QR");
+            return handleAnswer(false, "", "Cancel QR code generation");
             // console.log('Quá trình tạo mã QR đã bị hủy.');
             rl.close();
         }
         else {
-            console.log('Lựa chọn không hợp lệ');
+            console.log('Invalid selection');
             rl.close();
         }
     });
