@@ -1,6 +1,6 @@
 import qrcode from 'qrcode';
 import readline from 'readline';
-import { handleAnswer } from '../Util/Handle'
+import { handleAnswer } from '../Util/Handle.js'
 
 async function generateQRCode(text: string) {
   try {

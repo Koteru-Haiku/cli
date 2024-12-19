@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { showVersion } from '../commands/version';
-import { qrCommand } from '../commands/qr'; 
-import { welcome } from '../commands/info';
-import { generatePassword, Option } from '../commands/password'
-import { VERSION } from '../constants/version';
+import { showVersion } from '../commands/version.js';
+import { qrCommand } from '../commands/qr.js'; 
+import { welcome } from '../commands/info.js';
+import { generatePassword, Option } from '../commands/password.js'
+import { VERSION } from '../constants/version.js';
 
 const program = new Command();
 

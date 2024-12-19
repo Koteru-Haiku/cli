@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { VERSION } from '../constants/version';
+import { VERSION } from '../constants/version.js';
 
 export function showVersion() {
     try {
