@@ -6,6 +6,7 @@ import { qrCommand } from '../commands/qr.js';
 import { welcome } from '../commands/info.js';
 import { generatePassword, Option } from '../commands/password.js'
 import { VERSION } from '../constants/version.js';
+import { countFilesAndFolders } from '../commands/countfiles.js'
 
 const program = new Command();
 
@@ -41,5 +42,12 @@ program
   .action(() => {
     Option();
   })
+
+program
+  .command("count <path>")
+  .description("Đếm files và folders")
+  .action(async (folderPath) => {
+    await countFilesAndFolders(folderPath);
+  });
 
 program.parse(process.argv);

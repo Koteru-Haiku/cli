@@ -5,6 +5,7 @@ import { qrCommand } from '../commands/qr.js';
 import { welcome } from '../commands/info.js';
 import { Option } from '../commands/password.js';
 import { VERSION } from '../constants/version.js';
+import { countFilesAndFolders } from '../commands/countfiles.js';
 const program = new Command();
 program
     .name('chx-cli')
@@ -33,5 +34,11 @@ program
     .description('Tạo mật khẩu ngẫu nhiên với các tùy chọn')
     .action(() => {
     Option();
+});
+program
+    .command("count <path>")
+    .description("Count files and folders in a directory")
+    .action(async (folderPath) => {
+    await countFilesAndFolders(folderPath);
 });
 program.parse(process.argv);

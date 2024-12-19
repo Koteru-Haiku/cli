@@ -11,10 +11,17 @@
     "start": "node dist/src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "haiku",
+    "extension"
+  ],
   "author": "Le Dinh Chinh",
   "license": "ISC",
-  "description": "",
+  "description": "CLi for Haiku team",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Koteru-Haiku/cli.git"
+  },
   "dependencies": {
     "chalk": "^5.3.0",
     "chalk-animation": "^2.0.3",
