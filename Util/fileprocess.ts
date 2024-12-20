@@ -9,7 +9,7 @@ export async function readFile(filePath: string): Promise<string[]> {
 
   const stats = fs.statSync(filePath);
   if (stats.isDirectory()) {
-    await handleAnswer(false, "", "Path is a directory. Please specify a file path");
+    await handleAnswer(false, "Path is a directory. Please specify a file path");
     // console.error("Path is a directory. Please specify a file path");
     process.exit(1);
   }
@@ -20,6 +20,6 @@ export async function readFile(filePath: string): Promise<string[]> {
 
 export async function saveFile(filePath: string, content: string[]): Promise<void> {
   fs.writeFileSync(filePath, content.join("\n"));
-    await handleAnswer(true, "File saed successfully", "");
+    await handleAnswer(true, "File saed successfully");
   // console.log("File saved successfully.");
 }
