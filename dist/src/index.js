@@ -9,6 +9,8 @@ import { countFilesAndFolders } from '../commands/countfiles.js';
 import { readFile, saveFile } from "../Util/fileprocess.js";
 import { editFile } from "../commands/editFile.js";
 import readlineSync from "readline-sync";
+import simpleGit from 'simple-git';
+const git = simpleGit();
 const program = new Command();
 program
     .name('chx-cli')
@@ -56,5 +58,18 @@ program
     });
     const updatedContent = await editFile(content);
     await saveFile(filePath, updatedContent);
+});
+program
+    .command('clone <repoUrl>')
+    .description('Clone a GitHub repository into the current directory')
+    .action(async (repoUrl) => {
+    try {
+        console.log(`Cloning repository from ${repoUrl} into the current directory...`);
+        await git.clone(repoUrl);
+        console.log('Successfully cloned the repository into the current directory');
+    }
+    catch (error) {
+        console.error('Error cloning the repository:', error);
+    }
 });
 program.parse(process.argv);
