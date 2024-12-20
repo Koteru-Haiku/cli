@@ -7,7 +7,7 @@ export async function readFile(filePath) {
     }
     const stats = fs.statSync(filePath);
     if (stats.isDirectory()) {
-        await handleAnswer(false, "", "Path is a directory. Please specify a file path");
+        await handleAnswer(false, "Path is a directory. Please specify a file path");
         // console.error("Path is a directory. Please specify a file path");
         process.exit(1);
     }
@@ -16,6 +16,6 @@ export async function readFile(filePath) {
 }
 export async function saveFile(filePath, content) {
     fs.writeFileSync(filePath, content.join("\n"));
-    await handleAnswer(true, "File saed successfully", "");
+    await handleAnswer(true, "File saed successfully");
     // console.log("File saved successfully.");
 }
