@@ -17,7 +17,7 @@ export async function editFile(content) {
                 }
                 else {
                     // console.log("Invalid line number");
-                    await handleAnswer(false, "", "Invalid line number");
+                    await handleAnswer(false, "Invalid line number");
                 }
                 break;
             case "delete":
@@ -26,7 +26,7 @@ export async function editFile(content) {
                     content.splice(deleteLine, 1);
                 }
                 else {
-                    await handleAnswer(false, "", "Invalid line number");
+                    await handleAnswer(false, "Invalid line number");
                 }
                 break;
             case "save":
