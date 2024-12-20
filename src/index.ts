@@ -57,17 +57,17 @@ program
   program
   .command("edit")
   .description("edit file")
-  .action(() => {
+  .action(async () => {
     const filePath = readlineSync.question("Enter file path: ");
-    const content = readFile(filePath);
+    const content = await readFile(filePath);
     
     console.log("=== File content ===");
     content.forEach((line, index) => {
       console.log(`${index + 1}: ${line}`);
     });
 
-    const updatedContent = editFile(content);
-    saveFile(filePath, updatedContent);
+    const updatedContent = await editFile(content);
+    await saveFile(filePath, updatedContent);
   });
 
 program.parse(process.argv);
