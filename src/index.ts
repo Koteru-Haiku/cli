@@ -23,6 +23,11 @@ import simpleGit from 'simple-git';
 import packageJson from 'package-json';
 import { execSync } from 'child_process';
 
+import { listProcesses } from '../commands/system/listProccesses.js';
+import { killProcess } from '../commands/system/killProcess.js';
+import { monitorProcess } from '../util/processUtils.js';
+import { handleFindProcess } from '../commands/system/findProcess.js'
+
 const git = simpleGit();
 
 const program = new Command();
@@ -32,7 +37,35 @@ program
   .description('A custom CLI tool for special tasks')
   .version(`${VERSION}`, '-v, --version', 'Show current version of Haiku CLI');
 
+program
+  .command('list')
+  .description('List all running processes')
+  .action(listProcesses);
+
+program
+  .command('kill <pid>')
+  .description('Kill a process by PID')
+  .action((pid: string) => {
+      killProcess(parseInt(pid));
+  });
+
+program
+  .command('monitor <pid>')
+  .description('Monitor a process by PID')
+  .action((pid: string) => {
+      monitorProcess(parseInt(pid));
+  });
+
   program
+  .command('find <name>')
+  .description('Find processes by name')
+  .option('-e, --exact', 'Exact match')
+  .option('-l, --limit <number>', 'Limit the number of results', parseInt)
+  .action((name: string, options: { exact?: boolean; limit?: number }) => {
+      handleFindProcess(name, options.exact, options.limit);
+  });
+
+program
   .command('resize <input> <output>')
   .description('Resize an image and adjust its quality.')
   .option('-w, --width <number>', 'Target width in pixels')
