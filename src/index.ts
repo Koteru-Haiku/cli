@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import fs from 'fs'
-
 import { Command } from 'commander';
 import { showVersion } from '../commands/version.js';
 import { qrCommand } from '../commands/qr.js'; 
@@ -13,20 +12,20 @@ import { countFilesAndFoldersDeep } from '../commands/countfiles/countfilesdeep.
 import { getWeatherCommand } from '../commands/getweather.js'
 import { monitorSystemCommand } from '../commands/monitorSystem.js';
 import { convertImageCommand } from '../commands/convertImage.js'
-
 import { resizeImage } from '../commands/imageresize.js'
-
-import { readFile, saveFile } from "../util/fileprocess.js";
+import { readFile, saveFile } from "../utils/fileprocess.js";
 import { editFile } from "../commands/editFile.js";
 import readlineSync from "readline-sync";
 import simpleGit from 'simple-git';
 import packageJson from 'package-json';
 import { execSync } from 'child_process';
-
 import { listProcesses } from '../commands/system/listProccesses.js';
 import { killProcess } from '../commands/system/killProcess.js';
-import { monitorProcess } from '../util/processUtils.js';
+import { monitorProcess } from '../utils/processUtils.js';
 import { handleFindProcess } from '../commands/system/findProcess.js'
+import { getNetworkInfo } from '../commands/networkInfo.js'
+import { encryptFile } from '../commands/code/encrypt.js';
+import { decryptFile } from '../commands/code/decrypt.js';
 
 const git = simpleGit();
 
@@ -36,6 +35,32 @@ program
   .name('haiku')
   .description('A custom CLI tool for special tasks')
   .version(`${VERSION}`, '-v, --version', 'Show current version of Haiku CLI');
+
+program
+  .command('encrypt <inputFile> <outputFile>')
+  .description('Encrypt a file')
+  .action((inputFile: string, outputFile: string) => {
+    encryptFile(inputFile, outputFile);
+  });
+
+program
+  .command('decrypt <inputFile> <outputFile>')
+  .description('Decrypt a file')
+  .action((inputFile: string, outputFile: string) => {
+    decryptFile(inputFile, outputFile);
+  });
+
+program
+  .command('myip')
+  .description('Show your IP')
+  .action(() => {
+    const info = getNetworkInfo();
+    info.forEach((iface) => {
+      console.log(`Interface: ${iface.interface}`);
+      console.log(`IP Address: ${iface.ip}`);
+      console.log('-------------------------');
+    });
+  });
 
 program
   .command('list')
