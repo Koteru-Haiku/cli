@@ -1,6 +1,6 @@
 {
   "name": "chx-cli",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "main": "src/index.ts",
   "type": "module",
   "bin": {
