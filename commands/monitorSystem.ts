@@ -4,7 +4,7 @@ import * as readline from 'readline';
 
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 
 function createCPUMonitor() {
@@ -28,7 +28,7 @@ function createCPUMonitor() {
     } else {
       const totalDelta = total - prevTotal;
       const idleDelta = idle - prevIdle;
-      const cpuUsage = 1 - (idleDelta / totalDelta);
+      const cpuUsage = 1 - idleDelta / totalDelta;
       callback(cpuUsage * 100);
       prevTotal = total;
       prevIdle = idle;
@@ -40,22 +40,28 @@ const getCPUPercentage = createCPUMonitor();
 
 function monitorSystem() {
   const intervalId = setInterval(() => {
-    clear();
-    console.log('System Monitor');
-    console.log('----------------');
+    try {
+      clear();
+      console.log('System Monitor');
+      console.log('----------------');
 
-    getCPUPercentage((cpuUsage) => {
-      console.log(`CPU Usage: ${(cpuUsage).toFixed(2)}%`);
-    });
+      getCPUPercentage((cpuUsage) => {
+        console.log(`CPU Usage: ${cpuUsage.toFixed(2)}%`);
+      });
 
-    const freeMem = os.freemem();
-    const totalMem = os.totalmem();
-    const usedMem = totalMem - freeMem;
-    const memUsage = (usedMem / totalMem) * 100;
-    console.log(`Memory Usage: ${(memUsage).toFixed(2)}%`);
-    console.log(`Used: ${(usedMem / 1024 / 1024).toFixed(2)} MB / ${(totalMem / 1024 / 1024).toFixed(2)} MB`);
+      const freeMem = os.freemem();
+      const totalMem = os.totalmem();
+      const usedMem = totalMem - freeMem;
+      const memUsage = (usedMem / totalMem) * 100;
+      console.log(`Memory Usage: ${memUsage.toFixed(2)}%`);
+      console.log(
+        `Used: ${(usedMem / 1024 / 1024).toFixed(2)} MB / ${(totalMem / 1024 / 1024).toFixed(2)} MB`
+      );
 
-    console.log('\nPress "q" to quit.');
+      console.log('\nPress "q" to quit.');
+    } catch (error) {
+      console.error('Error monitoring system:', (error as Error).message);
+    }
   }, 1000);
 
   rl.on('line', (input) => {
@@ -63,13 +69,16 @@ function monitorSystem() {
       clearInterval(intervalId);
       rl.close();
       console.log('Exiting system monitor...');
-      process.exit();
     }
+  });
+
+  rl.on('close', () => {
+    console.log('System monitor closed.');
   });
 }
 
 export const monitorSystemCommand = {
   command: 'monitor-system',
   description: 'Monitor CPU and RAM usage in real-time',
-  action: monitorSystem
+  action: monitorSystem,
 };

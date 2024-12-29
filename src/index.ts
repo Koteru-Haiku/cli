@@ -12,9 +12,10 @@ import { getWeatherCommand } from '../commands/getweather.js'
 import { monitorSystemCommand } from '../commands/monitorSystem.js';
 import { convertImageCommand } from '../commands/convertImage.js'
 
-import { readFile, saveFile } from "../util/fileprocess.js";
-import { editFile } from "../commands/editFile.js";
-import readlineSync from "readline-sync";
+import { question, createReadline } from '../util/util.js';
+
+import readlineSync from 'readline-sync';
+import { readFile, saveFile, editFile } from "../commands/editFile.js";
 import simpleGit from 'simple-git';
 import packageJson from 'package-json';
 import { execSync } from 'child_process';
@@ -28,10 +29,10 @@ program
   .description('A custom CLI tool for special tasks')
   .version(`${VERSION}`, '-v, --version', 'Show current version of haiku cli');
 
-  program.addCommand(convertImageCommand);
+program.addCommand(convertImageCommand);
 
 program
-  .command(getWeatherCommand.command) // thu cach viet moi :3
+  .command(getWeatherCommand.command)
   .description(getWeatherCommand.description)
   .option(getWeatherCommand.options[0].flag, getWeatherCommand.options[0].description)
   .action(getWeatherCommand.action);
@@ -60,14 +61,14 @@ program
   .description('')
   .action(() => {
     welcome();
-  })
+  });
 
 program
   .command('password')
   .description('Generate random password with options')
   .action(() => {
     OptionPassword();
-  })
+  });
 
 program
   .command("count <path>")
@@ -76,29 +77,34 @@ program
   .action(async (path, options) => {
     try {
       if (options.d) {
-        await countFilesAndFoldersDeep(path);
+        const result = await countFilesAndFoldersDeep(path);
+        console.log(`Total Files: ${result.files}`);
+        console.log(`Total Folders: ${result.folders}`);
       } else {
         await countFilesAndFoldersShallow(path);
       }
     } catch (error) {
       console.error("An error occurred:", error);
     }
+    finally {
+    }
   });
 
-program
-  .command("edit")
-  .description("edit file")
+  program
+  .command('edit')
+  .description('Edit a file')
   .action(async () => {
-    const filePath = readlineSync.question("Enter file path: ");
+    const filePath = readlineSync.question('Enter file path: ');
     const content = await readFile(filePath);
-    
-    console.log("=== File content ===");
+
+    console.log('=== File content ===');
     content.forEach((line, index) => {
       console.log(`${index + 1}: ${line}`);
     });
 
     const updatedContent = await editFile(content);
     await saveFile(filePath, updatedContent);
+    console.log('File saved successfully.');
   });
 
 program
@@ -110,7 +116,11 @@ program
       await git.clone(repoUrl);
       console.log('Successfully cloned the repository into the current directory');
     } catch (error) {
-      console.error('Error cloning the repository:', error);
+      if (error instanceof Error) {
+        console.error('Error cloning the repository:', error.message);
+      } else {
+        console.error('An unknown error occurred while cloning the repository:', error);
+      }
     }
   });
 
@@ -120,7 +130,7 @@ program
   .action(async () => {
     try {
       const currentVersion = VERSION;
-      const latestVersion = (await packageJson('@chinh/haiku')).version;
+      const latestVersion = (await packageJson('@yukiookii/haiku')).version;
 
       console.log(`Current version: ${currentVersion}`);
       console.log(`Latest version available: ${latestVersion}`);
@@ -136,7 +146,7 @@ program
       console.log(`Successfully updated CLI from ${currentVersion} to ${latestVersion}`);
     } catch (error) {
       console.error('Error updating to the latest version:', error);
-      process.exit(1);
+      throw error;
     }
   });
 

@@ -1,40 +1,61 @@
-import readlineSync from "readline-sync";
-import { handleAnswer } from "../util/Handle.js";
+import * as fs from 'fs/promises';
+import readlineSync from 'readline-sync';
+import { handleAnswer } from '../util/Handle.js';
 
-// Chỉnh sửa file
+export async function readFile(filePath: string): Promise<string[]> {
+  try {
+    const data = await fs.readFile(filePath, 'utf8');
+    return data.split('\n');
+  } catch (error) {
+    throw new Error(`Failed to read file: ${(error as Error).message}`);
+  }
+}
+
+export async function saveFile(filePath: string, content: string[]): Promise<void> {
+  try {
+    await fs.writeFile(filePath, content.join('\n'), 'utf8');
+  } catch (error) {
+    throw new Error(`Failed to save file: ${(error as Error).message}`);
+  }
+}
+
 export async function editFile(content: string[]): Promise<string[]> {
   let editing = true;
   while (editing) {
-    const action = readlineSync.question("Choose action (add/edit/delete/save/exit): ");
+    const action = readlineSync.question('Choose action (add/edit/delete/save/exit): ');
     switch (action) {
-      case "add":
-        const newLine = readlineSync.question("Add line: ");
+      case 'add': {
+        const newLine = readlineSync.question('Add line: ');
         content.push(newLine);
         break;
-      case "edit":
-        const editLine = parseInt(readlineSync.question("Line number to edit: ")) - 1;
-        if (editLine >= 0 && editLine < content.length) {
-          content[editLine] = readlineSync.question("New content: ");
+      }
+      case 'edit': {
+        const editLineInput = readlineSync.question('Line number to edit: ');
+        const editLine = parseInt(editLineInput, 10) - 1;
+        if (!isNaN(editLine) && editLine >= 0 && editLine < content.length) {
+          content[editLine] = readlineSync.question('New content: ');
         } else {
-          // console.log("Invalid line number");
-          await handleAnswer(false, "Invalid line number");
+          await handleAnswer(false, 'Invalid line number');
         }
         break;
-      case "delete":
-        const deleteLine = parseInt(readlineSync.question("Line number to delete: ")) - 1;
-        if (deleteLine >= 0 && deleteLine < content.length) {
+      }
+      case 'delete': {
+        const deleteLineInput = readlineSync.question('Line number to delete: ');
+        const deleteLine = parseInt(deleteLineInput, 10) - 1;
+        if (!isNaN(deleteLine) && deleteLine >= 0 && deleteLine < content.length) {
           content.splice(deleteLine, 1);
         } else {
-          await handleAnswer(false, "Invalid line number");
+          await handleAnswer(false, 'Invalid line number');
         }
         break;
-      case "save":
+      }
+      case 'save':
         return content;
-      case "exit":
+      case 'exit':
         editing = false;
         break;
       default:
-        console.log("Invalid action");
+        console.log('Invalid action');
     }
   }
   return content;
