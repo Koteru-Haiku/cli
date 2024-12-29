@@ -9,7 +9,7 @@ import { VERSION } from '../constants/version.js';
 import { countFilesAndFoldersShallow } from '../commands/countfiles/countfiles.js'
 import { countFilesAndFoldersDeep } from '../commands/countfiles/countfilesdeep.js'
 
-import { readFile, saveFile } from "../Util/fileprocess.js";
+import { readFile, saveFile } from "../util/fileprocess.js";
 import { editFile } from "../commands/editFile.js";
 import readlineSync from "readline-sync";
 import simpleGit from 'simple-git';
