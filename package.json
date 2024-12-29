@@ -33,12 +33,14 @@
     "dotenv": "^16.4.7",
     "figlet": "^1.8.0",
     "gradient-string": "^3.0.0",
+    "image-type": "^5.2.0",
     "inquirer": "^12.2.0",
     "nanospinner": "^1.2.2",
     "package-json": "^10.0.1",
     "qr-image": "^3.2.0",
     "qrcode": "^1.5.4",
     "readline-sync": "^1.4.10",
+    "sharp": "^0.33.5",
     "simple-git": "^3.27.0"
   },
   "devDependencies": {
