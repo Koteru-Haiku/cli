@@ -9,6 +9,7 @@ import { VERSION } from '../constants/version.js';
 import { countFilesAndFoldersShallow } from '../commands/countfiles/countfiles.js'
 import { countFilesAndFoldersDeep } from '../commands/countfiles/countfilesdeep.js'
 import { getWeatherCommand } from '../commands/getweather.js'
+import { monitorSystemCommand } from '../commands/monitorSystemCommand.js';
 
 import { readFile, saveFile } from "../util/fileprocess.js";
 import { editFile } from "../commands/editFile.js";
@@ -31,6 +32,11 @@ program
   .description(getWeatherCommand.description)
   .option(getWeatherCommand.options[0].flag, getWeatherCommand.options[0].description)
   .action(getWeatherCommand.action);
+
+program
+  .command(monitorSystemCommand.command)
+  .description(monitorSystemCommand.description)
+  .action(monitorSystemCommand.action);
 
 program
   .command('qr')
