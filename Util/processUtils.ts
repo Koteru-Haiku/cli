@@ -39,23 +39,19 @@ export async function findProcessByName(name: string, exactMatch: boolean = fals
 }
 
 export async function monitorProcess(pid: number, interval: number = 1000) {
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-    });
+    if (process.stdin.isTTY) {
+        process.stdin.setRawMode(true);
+    }
 
-    let isMonitoring = true;
-
-    rl.on('line', (input) => {
-        if (input.trim().toLowerCase() === 'q') {
-            isMonitoring = false;
-            console.log("Monitoring stopped by user.");
-            rl.close();
+    process.stdin.on('data', (key) => {
+        if (key) {
+            console.log("\nMonitoring stopped by user.");
+            process.exit(0);
         }
     });
 
     try {
-        while (isMonitoring) {
+        while (true) {
             const processes = await si.processes();
             const proc = processes.list.find(p => p.pid === pid);
             if (proc) {
@@ -64,12 +60,11 @@ export async function monitorProcess(pid: number, interval: number = 1000) {
                 console.log(`Process ${pid} not found.`);
                 break;
             }
-
             await new Promise(resolve => setTimeout(resolve, interval));
         }
     } catch (error) {
         console.error("Error monitoring process:", error);
     } finally {
-        rl.close();
+        process.stdin.setRawMode(false); 
     }
 }

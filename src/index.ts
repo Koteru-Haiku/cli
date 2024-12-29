@@ -27,6 +27,7 @@ import { listProcesses } from '../commands/system/listProccesses.js';
 import { killProcess } from '../commands/system/killProcess.js';
 import { monitorProcess } from '../util/processUtils.js';
 import { handleFindProcess } from '../commands/system/findProcess.js'
+import { getNetworkInfo } from '../commands/networkInfo.js'
 
 const git = simpleGit();
 
@@ -36,6 +37,15 @@ program
   .name('haiku')
   .description('A custom CLI tool for special tasks')
   .version(`${VERSION}`, '-v, --version', 'Show current version of Haiku CLI');
+
+program.command('myip').action(() => {
+    const info = getNetworkInfo();
+    info.forEach((iface) => {
+      console.log(`Interface: ${iface.interface}`);
+      console.log(`IP Address: ${iface.ip}`);
+      console.log('-------------------------');
+    });
+  });
 
 program
   .command('list')
