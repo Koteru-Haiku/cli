@@ -9,6 +9,8 @@ import { VERSION } from '../constants/version.js';
 import { countFilesAndFoldersShallow } from '../commands/countfiles/countfiles.js'
 import { countFilesAndFoldersDeep } from '../commands/countfiles/countfilesdeep.js'
 import { getWeatherCommand } from '../commands/getweather.js'
+import { monitorSystemCommand } from '../commands/monitorSystem.js';
+import { convertImageCommand } from '../commands/convertImage.js'
 
 import { readFile, saveFile } from "../util/fileprocess.js";
 import { editFile } from "../commands/editFile.js";
@@ -26,11 +28,18 @@ program
   .description('A custom CLI tool for special tasks')
   .version(`${VERSION}`, '-v, --version', 'Show current version of chx-cli');
 
+  program.addCommand(convertImageCommand);
+
 program
   .command(getWeatherCommand.command) // thu cach viet moi :3
   .description(getWeatherCommand.description)
   .option(getWeatherCommand.options[0].flag, getWeatherCommand.options[0].description)
   .action(getWeatherCommand.action);
+
+program
+  .command(monitorSystemCommand.command)
+  .description(monitorSystemCommand.description)
+  .action(monitorSystemCommand.action);
 
 program
   .command('qr')
