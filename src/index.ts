@@ -65,8 +65,12 @@ program
 program
   .command('password')
   .description('Generate random password with options')
-  .action(() => {
-    OptionPassword();
+  .action(async () => {
+    try {
+      await OptionPassword();
+    } catch (error) {
+      console.log((error as Error).message)
+    }
   })
 
 program
@@ -89,16 +93,20 @@ program
   .command("edit")
   .description("edit file")
   .action(async () => {
-    const filePath = readlineSync.question("Enter file path: ");
-    const content = await readFile(filePath);
-    
-    console.log("=== File content ===");
-    content.forEach((line, index) => {
-      console.log(`${index + 1}: ${line}`);
-    });
-
-    const updatedContent = await editFile(content);
-    await saveFile(filePath, updatedContent);
+    try {
+      const filePath = readlineSync.question("Enter file path: ");
+      const content = await readFile(filePath);
+      
+      console.log("=== File content ===");
+      content.forEach((line, index) => {
+        console.log(`${index + 1}: ${line}`);
+      });
+  
+      const updatedContent = await editFile(content);
+      await saveFile(filePath, updatedContent);  
+    } catch (error) {
+      console.log((error as Error).message)
+    }
   });
 
 program
