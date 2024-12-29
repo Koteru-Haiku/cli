@@ -9,6 +9,7 @@ export const getWeatherCommand = {
   action: async (options: { city: string }) => {
     if (!options.city) {
       console.error('Please provide a city name with --city');
+      process.exit(1);
       return;
     }
     try {
@@ -17,8 +18,10 @@ export const getWeatherCommand = {
       console.log(`Temperature: ${weatherData.main.temp}°C`);
       console.log(`Condition: ${weatherData.weather[0].description}`);
       console.log(`Humidity: ${weatherData.main.humidity}%`);
+      process.exit(0);
     } catch (error) {
-        console.error('Error fetching weather data:', (error as Error).message);
+      console.error('Error fetching weather data:', (error as Error).message);
+      process.exit(1);  
     }
   }
 };
