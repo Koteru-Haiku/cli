@@ -24,9 +24,9 @@ const git = simpleGit();
 const program = new Command();
 
 program
-  .name('chx-cli')
+  .name('haiku')
   .description('A custom CLI tool for special tasks')
-  .version(`${VERSION}`, '-v, --version', 'Show current version of chx-cli');
+  .version(`${VERSION}`, '-v, --version', 'Show current version of haiku cli');
 
   program.addCommand(convertImageCommand);
 
@@ -120,7 +120,7 @@ program
   .action(async () => {
     try {
       const currentVersion = VERSION;
-      const latestVersion = (await packageJson('chx-cli')).version;
+      const latestVersion = (await packageJson('@chinh/haiku')).version;
 
       console.log(`Current version: ${currentVersion}`);
       console.log(`Latest version available: ${latestVersion}`);
@@ -131,7 +131,7 @@ program
       }
 
       console.log('Updating to latest version...');
-      execSync('npm install -g chx-cli@latest', { stdio: 'inherit' });
+      execSync('npm install -g @yukiookii/haiku@latest', { stdio: 'inherit' });
 
       console.log(`Successfully updated CLI from ${currentVersion} to ${latestVersion}`);
     } catch (error) {
