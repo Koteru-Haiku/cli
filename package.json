@@ -1,10 +1,10 @@
 {
-  "name": "chx-cli",
-  "version": "1.0.15",
+  "name": "@yukiookii/haiku",
+  "version": "1.0.2",
   "main": "src/index.ts",
   "type": "module",
   "bin": {
-    "chx-cli": "./dist/src/index.js"
+    "haiku": "./dist/src/index.js"
   },
   "scripts": {
     "build": "tsc",
