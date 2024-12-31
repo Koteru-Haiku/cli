@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-import fs from 'fs'
+import fs, { promises as profs } from 'fs'
+import path from 'path';
 import { Command } from 'commander';
 import { showVersion } from '../commands/version.js';
 import { qrCommand } from '../commands/qr.js'; 
@@ -279,6 +280,41 @@ program
       });
     } catch (error) {
       console.error('Error fetching commit history:', error);
+    }
+  });
+
+  program
+  .command('search')
+  .description('Search for files or directories matching the query or extension')
+  .option('-d, --dir <directory>', 'Specify the directory to search in', '.')
+  .option('-e, --extension <ext>', 'Search for files with a specific extension')
+  .option('-q, --query <query>', 'Search for files or directories matching the query')
+  .action(async (options) => {
+    try {
+      const searchDir = options.dir;
+      const extension = options.extension;
+      const query = options.query;
+
+      console.log(`Searching in ${searchDir}...`);
+      if (extension) console.log(`Filtering by extension .${extension}`);
+      if (query) console.log(`Filtering by query "${query}"`);
+
+      const files = await profs.readdir(searchDir, { withFileTypes: true });
+      const results = files.filter(file => {
+        const matchesQuery = query ? file.name.includes(query) : true;
+        const matchesExtension = extension ? file.name.endsWith(`.${extension}`) : true;
+        return matchesQuery && matchesExtension;
+      });
+
+      if (results.length > 0) {
+        results.forEach(file => {
+          console.log(`${file.isDirectory() ? '📁' : '📄'} ${path.join(searchDir, file.name)}`);
+        });
+      } else {
+        console.log('No results found.');
+      }
+    } catch (error) {
+      console.error('Error searching:', error);
     }
   });
 
