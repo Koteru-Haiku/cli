@@ -218,6 +218,71 @@ program
   });
 
 program
+  .command('branch [branchName]')
+  .description('Create, delete, or list Git branches')
+  .option('-d, --delete', 'Delete a branch')
+  .action(async (branchName, options) => {
+    try {
+      if (options.delete) {
+        console.log(`Deleting branch: ${branchName}...`);
+        await git.deleteLocalBranch(branchName);
+        console.log(`Branch ${branchName} deleted successfully.`);
+      } else if (branchName) {
+        console.log(`Creating branch: ${branchName}...`);
+        await git.checkoutLocalBranch(branchName);
+        console.log(`Branch ${branchName} created successfully.`);
+      } else {
+        console.log('Listing branches...');
+        const branches = await git.branch();
+        console.log(branches.all);
+      }
+    } catch (error) {
+      console.error('Error managing branches:', error);
+    }
+});
+
+program
+  .command('push')
+  .description('Push changes to the remote Git repository')
+  .action(async () => {
+    try {
+      console.log('Pushing changes to the remote repository...');
+      await git.push();
+      console.log('Changes pushed successfully.');
+    } catch (error) {
+      console.error('Error pushing changes:', error);
+    }
+});
+
+program
+  .command('pull')
+  .description('Pull changes from the remote Git repository')
+  .action(async () => {
+    try {
+      console.log('Pulling changes from the remote repository...');
+      await git.pull();
+      console.log('Changes pulled successfully.');
+    } catch (error) {
+      console.error('Error pulling changes:', error);
+    }
+});
+
+program
+  .command('log')
+  .description('Show the commit history of the Git repository')
+  .action(async () => {
+    try {
+      console.log('Fetching commit history...');
+      const log = await git.log();
+      log.all.forEach(commit => {
+        console.log(`Commit: ${commit.hash} - ${commit.message}`);
+      });
+    } catch (error) {
+      console.error('Error fetching commit history:', error);
+    }
+  });
+
+program
   .command('update')
   .description('Update to the latest version of CLI')
   .action(async () => {
