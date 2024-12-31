@@ -28,6 +28,9 @@ import { getNetworkInfo } from '../commands/networkInfo.js'
 import { encryptFile } from '../commands/code/encrypt.js';
 import { decryptFile } from '../commands/code/decrypt.js';
 
+import { ListBookMarks } from '../commands/bookmarks/listBookmarks.js'
+import { AddBookMarks } from '../commands/bookmarks/addBookmarks.js'
+
 const git = simpleGit();
 
 const program = new Command();
@@ -36,6 +39,18 @@ program
   .name('haiku')
   .description('A custom CLI tool for special tasks')
   .version(`${VERSION}`, '-v, --version', 'Show current version of Haiku CLI');
+
+  program
+  .command('add <name> <url>')
+  .description('Add a new bookmark')
+  .option('-t, --tags <tags>', 'Add tags to the bookmark (comma-separated)')
+  .action(async (name, url, options) => {
+    try {
+      await AddBookMarks(name, url);
+    } catch (error) {
+      console.error('Error adding bookmark:', (error as Error).message);
+    }
+  });
 
 program
   .command('encrypt <inputFile> <outputFile>')
@@ -65,8 +80,24 @@ program
 
 program
   .command('list')
+  .option('-p, --processes', 'List all running processes')
+  .option('-b, --bookmarks', 'List all bookmarks')
   .description('List all running processes')
-  .action(listProcesses);
+  .action(async (options) => {
+    try {
+      if(options.processes) {
+        await listProcesses();
+      }
+      if(options.bookmarks) {
+        await ListBookMarks();
+      }
+      if (!options.processes && !options.bookmarks) {
+        program.help();
+      }
+    } catch (error) {
+      console.log((error as Error).message);
+    }
+  });
 
 program
   .command('kill <pid>')
