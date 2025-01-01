@@ -1,5 +1,5 @@
-import exp from "constants";
 import simpleGit from "simple-git";
+import chalk from 'chalk';
 
 const git = simpleGit();
 
@@ -91,13 +91,16 @@ export async function Pull() {
 
 export async function Log() {
     try {
-        console.log('Fetching commit history...');
+        console.log(chalk.bold.blue('Fetching commit history...'));
         const log = await git.log();
-        log.all.forEach(commit => {
-          console.log(`Commit: ${commit.hash} - ${commit.message}`);
+        log.all.forEach((commit) => {
+            console.log(
+                chalk.green(`Commit: ${chalk.bold((commit.hash).substring(0, 7))}`) +
+                    chalk.yellow(` - ${commit.message}`)
+            );
         });
     } catch (error) {
-        console.error('Error fetching commit history:', (error as Error).message);
+        console.error(chalk.bold.red('Error fetching commit history:'), (error as Error).message);
     }
 }
 
@@ -109,35 +112,35 @@ export async function Status() {
         }
 
         const status = await git.status();
-        console.log('Repository status:');
-        console.log(`On branch ${status.current}`);
+        console.log(chalk.bold.blue('Repository status:'));
+        console.log(chalk.green(`On branch ${status.current}`));
 
         if (status.ahead > 0) {
-            console.log(`Your branch is ahead of 'origin/${status.current}' by ${status.ahead} commit(s).`);
+            console.log(chalk.yellow(`Your branch is ahead of 'origin/${status.current}' by ${status.ahead} commit(s).`));
         }
         if (status.behind > 0) {
-            console.log(`Your branch is behind 'origin/${status.current}' by ${status.behind} commit(s).`);
+            console.log(chalk.yellow(`Your branch is behind 'origin/${status.current}' by ${status.behind} commit(s).`));
         }
 
         if (status.modified.length > 0) {
-            console.log('\nChanges not staged for commit:');
-            status.modified.forEach((file) => console.log(`\tmodified: ${file}`));
+            console.log(chalk.bold('\nChanges not staged for commit:'));
+            status.modified.forEach((file) => console.log(chalk.red(`\tmodified: ${file}`)));
         }
         if (status.not_added.length > 0) {
-            console.log('\nUntracked files:');
-            status.not_added.forEach((file) => console.log(`\t${file}`));
+            console.log(chalk.bold('\nUntracked files:'));
+            status.not_added.forEach((file) => console.log(chalk.gray(`\t${file}`)));
         }
         if (status.created.length > 0) {
-            console.log('\nNew files:');
-            status.created.forEach((file) => console.log(`\t${file}`));
+            console.log(chalk.bold('\nNew files:'));
+            status.created.forEach((file) => console.log(chalk.green(`\t${file}`)));
         }
         if (status.deleted.length > 0) {
-            console.log('\nDeleted files:');
-            status.deleted.forEach((file) => console.log(`\t${file}`));
+            console.log(chalk.bold('\nDeleted files:'));
+            status.deleted.forEach((file) => console.log(chalk.red(`\t${file}`)));
         }
         if (status.staged.length > 0) {
-            console.log('\nChanges to be committed:');
-            status.staged.forEach((file) => console.log(`\t${file}`));
+            console.log(chalk.bold('\nChanges to be committed:'));
+            status.staged.forEach((file) => console.log(chalk.green(`\t${file}`)));
         }
 
         if (
@@ -147,9 +150,9 @@ export async function Status() {
             status.deleted.length === 0 &&
             status.staged.length === 0
         ) {
-            console.log('\nWorking directory is clean.');
+            console.log(chalk.bold.green('\nWorking directory is clean.'));
         }
     } catch (error) {
-        console.error('Error retrieving repository status:', (error as Error).message);
+        console.error(chalk.bold.red('Error retrieving repository status:'), (error as Error).message);
     }
 }
