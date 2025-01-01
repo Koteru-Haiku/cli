@@ -34,6 +34,7 @@ import { searchAnime } from '../commands/anime/searchAnime.js'
 import { createGIF } from '../commands/image/creategif.js'
 import * as git from '../commands/git/git.js'
 import { TruyenDexImageDownloader } from '../public/manga/MangaDexAPI.js'
+import { LightNovelDownloader } from '../public/lightnovel/LightNovel.js'
 
 const program = new Command();
 
@@ -51,6 +52,17 @@ program
       const downloader = new TruyenDexImageDownloader((message) => console.log(message));
       downloader.setupTitle(options.platform);
       await downloader.downloadManga(options.url);
+  });
+
+program
+  .command('ln')
+  .description('Download light novels to txt files')
+  .requiredOption('-u, --url <url>', 'URL of the light novel to download')
+  .option('-d, --domain <domain>', 'Domain to download from (default: ln.hako.vn)', 'ln.hako.vn')
+  .action(async (options) => {
+      const downloader = new LightNovelDownloader((message) => console.log(message));
+      downloader.setupDomain(options.domain);
+      await downloader.downloadLightNovel(options.url);
   });
 
 program
