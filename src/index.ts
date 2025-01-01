@@ -2,6 +2,7 @@
 
 import fs, { promises as profs } from 'fs'
 import path from 'path';
+import chalk from 'chalk';
 import { Command } from 'commander';
 import { showVersion } from '../commands/version.js';
 import { qrCommand } from '../commands/qr.js'; 
@@ -27,9 +28,10 @@ import { handleFindProcess } from '../commands/system/findProcess.js'
 import { getNetworkInfo } from '../commands/networkInfo.js'
 import { encryptFile } from '../commands/code/encrypt.js';
 import { decryptFile } from '../commands/code/decrypt.js';
-
 import { ListBookMarks } from '../commands/bookmarks/listBookmarks.js'
 import { AddBookMarks } from '../commands/bookmarks/addBookmarks.js'
+import { searchCharacter } from '../commands/anime/searchCharacter.js'
+import { searchAnime } from '../commands/anime/searchAnime.js'
 
 const git = simpleGit();
 
@@ -40,7 +42,26 @@ program
   .description('A custom CLI tool for special tasks')
   .version(`${VERSION}`, '-v, --version', 'Show current version of Haiku CLI');
 
-  program
+program
+  .command('anime')
+  .option('-c, --character <name>', 'Search for an anime character')
+  .option('-a, --anime <title>', 'Search for an anime by title')
+  .description('Search for anime characters or shows')
+  .action((options) => {
+    try {
+      if (options.character) {
+        searchCharacter(options.character);
+      } else if (options.anime) {
+        searchAnime(options.anime);
+      } else {
+        console.log(chalk.yellow('Please provide a character name using --character or an anime title using --anime.'));
+      }
+    } catch (error) {
+      console.error('Error searching:', (error as Error).message);
+    }
+  });
+
+program
   .command('add <name> <url>')
   .description('Add a new bookmark')
   .option('-t, --tags <tags>', 'Add tags to the bookmark (comma-separated)')
