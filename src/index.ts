@@ -32,8 +32,7 @@ import { ListBookMarks } from '../commands/bookmarks/listBookmarks.js'
 import { AddBookMarks } from '../commands/bookmarks/addBookmarks.js'
 import { searchCharacter } from '../commands/anime/searchCharacter.js'
 import { searchAnime } from '../commands/anime/searchAnime.js'
-
-const git = simpleGit();
+import * as git from '../commands/git/git.js'
 
 const program = new Command();
 
@@ -260,79 +259,51 @@ program
 program
   .command('clone <repoUrl>')
   .description('Clone a GitHub repository into the current directory')
-  .action(async (repoUrl) => {
-    try {
-      console.log(`Cloning repository from ${repoUrl} into the current directory...`);
-      await git.clone(repoUrl);
-      console.log('Successfully cloned the repository into the current directory');
-    } catch (error) {
-      console.error('Error cloning the repository:', error);
+  .option('-g --git', 'use git')
+  .action(async (repoUrl, options) => {
+    if(!options.git) {
+      console.error('Please provide a git flag with -g or --git');
+      return;
     }
+    await git.Clone(repoUrl);
   });
 
+const branch = git.Branch;
+
 program
-  .command('branch [branchName]')
-  .description('Create, delete, or list Git branches')
-  .option('-d, --delete', 'Delete a branch')
-  .action(async (branchName, options) => {
-    try {
-      if (options.delete) {
-        console.log(`Deleting branch: ${branchName}...`);
-        await git.deleteLocalBranch(branchName);
-        console.log(`Branch ${branchName} deleted successfully.`);
-      } else if (branchName) {
-        console.log(`Creating branch: ${branchName}...`);
-        await git.checkoutLocalBranch(branchName);
-        console.log(`Branch ${branchName} created successfully.`);
-      } else {
-        console.log('Listing branches...');
-        const branches = await git.branch();
-        console.log(branches.all);
-      }
-    } catch (error) {
-      console.error('Error managing branches:', error);
-    }
-});
+  .command(branch.command)
+  .description(branch.description)
+  .option(branch.options[0].flag, branch.options[0].description)
+  .option(branch.options[1].flag, branch.options[1].description)
+  .option(branch.options[2].flag, branch.options[2].description) // flag git :v
+  .action(branch.action);
 
 program
   .command('push')
   .description('Push changes to the remote Git repository')
   .action(async () => {
-    try {
-      console.log('Pushing changes to the remote repository...');
-      await git.push();
-      console.log('Changes pushed successfully.');
-    } catch (error) {
-      console.error('Error pushing changes:', error);
-    }
+    await git.Push();
 });
 
 program
   .command('pull')
   .description('Pull changes from the remote Git repository')
   .action(async () => {
-    try {
-      console.log('Pulling changes from the remote repository...');
-      await git.pull();
-      console.log('Changes pulled successfully.');
-    } catch (error) {
-      console.error('Error pulling changes:', error);
-    }
+    await git.Pull();
 });
 
 program
   .command('log')
   .description('Show the commit history of the Git repository')
   .action(async () => {
-    try {
-      console.log('Fetching commit history...');
-      const log = await git.log();
-      log.all.forEach(commit => {
-        console.log(`Commit: ${commit.hash} - ${commit.message}`);
-      });
-    } catch (error) {
-      console.error('Error fetching commit history:', error);
-    }
+    await git.Log();
+  });
+
+program
+  .command('status')
+  .description('Show the working tree status')
+  .action(async () => {
+    await git.Status();
   });
 
   program
