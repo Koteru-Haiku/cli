@@ -159,7 +159,7 @@ program
 program.addCommand(convertImageCommand);
 
 program
-  .command(getWeatherCommand.command) // thu cach viet moi :3
+  .command(getWeatherCommand.command)
   .description(getWeatherCommand.description)
   .option(getWeatherCommand.options[0].flag, getWeatherCommand.options[0].description)
   .action(getWeatherCommand.action);
@@ -188,7 +188,7 @@ program
   .description('')
   .action(() => {
     welcome();
-  })
+  });
 
 program
   .command('password')
@@ -208,18 +208,22 @@ program
   .action(async (path, options) => {
     try {
       if (options.d) {
-        await countFilesAndFoldersDeep(path);
+        const result = await countFilesAndFoldersDeep(path);
+        console.log(`Total Files: ${result.files}`);
+        console.log(`Total Folders: ${result.folders}`);
       } else {
         await countFilesAndFoldersShallow(path);
       }
     } catch (error) {
       console.error("An error occurred:", error);
     }
+    finally {
+    }
   });
 
-program
-  .command("edit")
-  .description("edit file")
+  program
+  .command('edit')
+  .description('Edit a file')
   .action(async () => {
     try {
       const filePath = readlineSync.question("Enter file path: ");
@@ -364,7 +368,7 @@ program
       console.log(`Successfully updated CLI from ${currentVersion} to ${latestVersion}`);
     } catch (error) {
       console.error('Error updating to the latest version:', error);
-      process.exit(1);
+      throw error;
     }
   });
 

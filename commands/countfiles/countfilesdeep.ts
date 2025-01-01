@@ -1,9 +1,9 @@
 import { readdir, lstat } from 'fs/promises';
 import path from 'path';
 
-export async function countFilesAndFoldersDeep(folderPath: string) {
-  let fileCount = 0;
-  let folderCount = 0;
+export async function countFilesAndFoldersDeep(dirPath: string): Promise<{ files: number; folders: number }> {
+  let files = 0;
+  let folders = 0;
 
   const stack = [folderPath];
   while (stack.length > 0) {

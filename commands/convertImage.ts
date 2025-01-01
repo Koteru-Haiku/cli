@@ -10,14 +10,14 @@ export const convertImageCommand = new Command('convert-image')
   .action(async (input, options) => {
     const inputPath = input;
     const outputFormat = options.format.toLowerCase();
-    
+
     if (!fs.existsSync(inputPath)) {
       console.error(`File not found: ${inputPath}`);
       return;
     }
-    
+
     const outputPath = changeExtension(inputPath, outputFormat);
-    
+
     try {
       await sharp(inputPath).toFormat(outputFormat).toFile(outputPath);
       console.log(`Image saved to ${outputPath}`);
@@ -25,7 +25,7 @@ export const convertImageCommand = new Command('convert-image')
       console.error(`Error converting image: ${(error as Error).message}`);
     }
   });
-  
+
 function changeExtension(inputPath: string, extension: string): string {
   const dir = path.dirname(inputPath);
   const name = path.basename(inputPath, path.extname(inputPath));
