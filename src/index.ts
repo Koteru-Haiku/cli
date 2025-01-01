@@ -14,7 +14,7 @@ import { countFilesAndFoldersDeep } from '../commands/countfiles/countfilesdeep.
 import { getWeatherCommand } from '../commands/getweather.js'
 import { monitorSystemCommand } from '../commands/monitorSystem.js';
 import { convertImageCommand } from '../commands/convertImage.js'
-import { resizeImage } from '../commands/imageresize.js'
+import { resizeImagesCommand } from '../commands/image/imageresize.js'
 import { readFile, saveFile } from "../utils/fileprocess.js";
 import { editFile } from "../commands/editFile.js";
 import readlineSync from "readline-sync";
@@ -150,28 +150,9 @@ program
   .option('-q, --quality <number>', 'Output quality (0-100)', '75')
   .action(async (input: string, output: string, options: { width?: string; height?: string; quality?: string }) => {
     try {
-      if (!fs.existsSync(input)) {
-        throw new Error(`Input file not found: ${input}`);
-      }
-
-      const width = options.width ? parseInt(options.width) : undefined;
-      const height = options.height ? parseInt(options.height) : undefined;
-      const quality = options.quality ? parseInt(options.quality) : 75;
-
-      if (width !== undefined && isNaN(width)) {
-        throw new Error('Width must be a valid number.');
-      }
-      if (height !== undefined && isNaN(height)) {
-        throw new Error('Height must be a valid number.');
-      }
-      if (isNaN(quality) || quality < 0 || quality > 100) {
-        throw new Error('Quality must be a number between 0 and 100.');
-      }
-
-      await resizeImage(input, output, width, height, quality);
-      console.log(`Image saved to ${output}`);
-    } catch (err) {
-      console.error('Error:', err instanceof Error ? err.message : 'An unknown error occurred.');
+      await resizeImagesCommand(input, output, options);
+    } catch (error) {
+      console.log((error as Error).message)
     }
   });
 
