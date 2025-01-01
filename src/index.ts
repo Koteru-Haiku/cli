@@ -105,8 +105,7 @@ program
 program
   .command('add <name> <url>')
   .description('Add a new bookmark')
-  .option('-t, --tags <tags>', 'Add tags to the bookmark (comma-separated)')
-  .action(async (name, url, options) => {
+  .action(async (name, url) => {
     try {
       await AddBookMarks(name, url);
     } catch (error) {
