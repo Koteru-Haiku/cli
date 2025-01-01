@@ -33,6 +33,7 @@ import { searchCharacter } from '../commands/anime/searchCharacter.js'
 import { searchAnime } from '../commands/anime/searchAnime.js'
 import { createGIF } from '../commands/image/creategif.js'
 import * as git from '../commands/git/git.js'
+import { TruyenDexImageDownloader } from '../public/manga/MangaDexAPI.js'
 
 const program = new Command();
 
@@ -40,6 +41,17 @@ program
   .name('haiku')
   .description('A custom CLI tool for special tasks')
   .version(`${VERSION}`, '-v, --version', 'Show current version of Haiku CLI');
+
+program
+  .command('manga')
+  .description('Download manga from MangaDex or TruyenDex')
+  .requiredOption('-u, --url <url>', 'URL of the manga to download')
+  .option('-p, --platform <platform>', 'Platform to download from (MangaDex or TruyenDex)', 'MangaDex')
+  .action(async (options) => {
+      const downloader = new TruyenDexImageDownloader((message) => console.log(message));
+      downloader.setupTitle(options.platform);
+      await downloader.downloadManga(options.url);
+  });
 
 program
   .command('create-gif <inputFolder> <outputFile>')
