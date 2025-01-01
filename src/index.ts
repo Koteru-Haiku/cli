@@ -281,28 +281,48 @@ program
 program
   .command('push')
   .description('Push changes to the remote Git repository')
-  .action(async () => {
+  .option('-g --git', 'use git')
+  .action(async (options) => {
+    if(!options.git) {
+      console.error('Please provide a git flag with -g or --git');
+      return;
+    }
     await git.Push();
 });
 
 program
   .command('pull')
   .description('Pull changes from the remote Git repository')
-  .action(async () => {
+  .option('-g --git', 'use git')
+  .action(async (options) => {
+    if(!options.git) {
+      console.error('Please provide a git flag with -g or --git');
+      return;
+    }
     await git.Pull();
 });
 
 program
   .command('log')
   .description('Show the commit history of the Git repository')
-  .action(async () => {
+  .option('-g --git', 'use git')
+  .action(async (options) => {
+    if(!options.git) {
+      console.error('Please provide a git flag with -g or --git');
+      return;
+    }
     await git.Log();
   });
 
 program
   .command('status')
   .description('Show the working tree status')
-  .action(async () => {
+  .option('-g --git', 'use git')
+  .action(async (options) => {
+    if(!options.git) {
+      console.error('Please provide a git flag with -g or --git');
+      return;
+    }
     await git.Status();
   });
 
