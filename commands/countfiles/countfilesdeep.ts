@@ -1,37 +1,36 @@
-import * as fs from 'fs/promises';
-import * as path from 'path';
+import { readdir, lstat } from 'fs/promises';
+import path from 'path';
 
 export async function countFilesAndFoldersDeep(dirPath: string): Promise<{ files: number; folders: number }> {
   let files = 0;
   let folders = 0;
 
-  async function traverse(currentPath: string) {
+  const stack = [folderPath];
+  while (stack.length > 0) {
+    const currentPath = stack.pop();
+    if (!currentPath) continue;
+
     try {
-      const entries = await fs.readdir(currentPath, { withFileTypes: true });
-
+      const entries = await readdir(currentPath, { withFileTypes: true });
       for (const entry of entries) {
-        const entryPath = path.join(currentPath, entry.name);
+        const fullPath = path.join(currentPath, entry.name);
 
-        if (entry.isDirectory()) {
-          folders++;
-          await traverse(entryPath); // Đệ quy vào thư mục con
-        } else if (entry.isFile()) {
-          files++;
+        if (entry.isSymbolicLink()) {
+          continue;
+        }
+
+        if (entry.isFile()) {
+          fileCount++;
+        } else if (entry.isDirectory()) {
+          folderCount++;
+          stack.push(fullPath);
         }
       }
     } catch (error) {
-      if (error instanceof Error) {
-        if ('code' in error && (error.code === 'EPERM' || error.code === 'EACCES')) {
-          console.error(`Permission denied: ${currentPath}`);
-        } else {
-          console.error(`Error reading directory ${currentPath}:`, error.message);
-        }
-      } else {
-        console.error(`Unknown error occurred: ${error}`);
-      }
+      console.warn(`Skipped inaccessible directory: ${currentPath}`);
     }
   }
 
-  await traverse(dirPath);
-  return { files, folders };
+  console.log(`Total Files: ${fileCount}`);
+  console.log(`Total Folders: ${folderCount}`);
 }

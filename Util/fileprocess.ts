@@ -9,3 +9,4 @@ export async function readFile(filePath: string): Promise<string[]> {
 export async function saveFile(filePath: string, content: string[]): Promise<void> {
   await fs.writeFile(filePath, content.join('\n'), 'utf8');
 }
+

@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+import fs, { promises as profs } from 'fs'
+import path from 'path';
+import chalk from 'chalk';
 import { Command } from 'commander';
 import { showVersion } from '../commands/version.js';
 import { qrCommand } from '../commands/qr.js'; 
@@ -11,23 +14,147 @@ import { countFilesAndFoldersDeep } from '../commands/countfiles/countfilesdeep.
 import { getWeatherCommand } from '../commands/getweather.js'
 import { monitorSystemCommand } from '../commands/monitorSystem.js';
 import { convertImageCommand } from '../commands/convertImage.js'
-
-import { question, createReadline } from '../util/util.js';
-
-import readlineSync from 'readline-sync';
-import { readFile, saveFile, editFile } from "../commands/editFile.js";
+import { resizeImagesCommand } from '../commands/image/imageresize.js'
+import { readFile, saveFile } from "../utils/fileprocess.js";
+import { editFile } from "../commands/editFile.js";
+import readlineSync from "readline-sync";
 import simpleGit from 'simple-git';
 import packageJson from 'package-json';
 import { execSync } from 'child_process';
-
-const git = simpleGit();
+import { listProcesses } from '../commands/system/listProccesses.js';
+import { killProcess } from '../commands/system/killProcess.js';
+import { monitorProcess } from '../utils/processUtils.js';
+import { handleFindProcess } from '../commands/system/findProcess.js'
+import { getNetworkInfo } from '../commands/networkInfo.js'
+import { encryptFile } from '../commands/code/encrypt.js';
+import { decryptFile } from '../commands/code/decrypt.js';
+import { ListBookMarks } from '../commands/bookmarks/listBookmarks.js'
+import { AddBookMarks } from '../commands/bookmarks/addBookmarks.js'
+import { searchCharacter } from '../commands/anime/searchCharacter.js'
+import { searchAnime } from '../commands/anime/searchAnime.js'
+import * as git from '../commands/git/git.js'
 
 const program = new Command();
 
 program
   .name('haiku')
   .description('A custom CLI tool for special tasks')
-  .version(`${VERSION}`, '-v, --version', 'Show current version of haiku cli');
+  .version(`${VERSION}`, '-v, --version', 'Show current version of Haiku CLI');
+
+program
+  .command('anime')
+  .option('-c, --character <name>', 'Search for an anime character')
+  .option('-a, --anime <title>', 'Search for an anime by title')
+  .description('Search for anime characters or shows')
+  .action((options) => {
+    try {
+      if (options.character) {
+        searchCharacter(options.character);
+      } else if (options.anime) {
+        searchAnime(options.anime);
+      } else {
+        console.log(chalk.yellow('Please provide a character name using --character or an anime title using --anime.'));
+      }
+    } catch (error) {
+      console.error('Error searching:', (error as Error).message);
+    }
+  });
+
+program
+  .command('add <name> <url>')
+  .description('Add a new bookmark')
+  .option('-t, --tags <tags>', 'Add tags to the bookmark (comma-separated)')
+  .action(async (name, url, options) => {
+    try {
+      await AddBookMarks(name, url);
+    } catch (error) {
+      console.error('Error adding bookmark:', (error as Error).message);
+    }
+  });
+
+program
+  .command('encrypt <inputFile> <outputFile>')
+  .description('Encrypt a file')
+  .action((inputFile: string, outputFile: string) => {
+    encryptFile(inputFile, outputFile);
+  });
+
+program
+  .command('decrypt <inputFile> <outputFile>')
+  .description('Decrypt a file')
+  .action((inputFile: string, outputFile: string) => {
+    decryptFile(inputFile, outputFile);
+  });
+
+program
+  .command('myip')
+  .description('Show your IP')
+  .action(() => {
+    const info = getNetworkInfo();
+    info.forEach((iface) => {
+      console.log(`Interface: ${iface.interface}`);
+      console.log(`IP Address: ${iface.ip}`);
+      console.log('-------------------------');
+    });
+  });
+
+program
+  .command('list')
+  .option('-p, --processes', 'List all running processes')
+  .option('-b, --bookmarks', 'List all bookmarks')
+  .description('List all running processes')
+  .action(async (options) => {
+    try {
+      if(options.processes) {
+        await listProcesses();
+      }
+      if(options.bookmarks) {
+        await ListBookMarks();
+      }
+      if (!options.processes && !options.bookmarks) {
+        program.help();
+      }
+    } catch (error) {
+      console.log((error as Error).message);
+    }
+  });
+
+program
+  .command('kill <pid>')
+  .description('Kill a process by PID')
+  .action((pid: string) => {
+      killProcess(parseInt(pid));
+  });
+
+program
+  .command('monitor <pid>')
+  .description('Monitor a process by PID')
+  .action((pid: string) => {
+      monitorProcess(parseInt(pid));
+  });
+
+  program
+  .command('find <name>')
+  .description('Find processes by name')
+  .option('-e, --exact', 'Exact match')
+  .option('-l, --limit <number>', 'Limit the number of results', parseInt)
+  .action((name: string, options: { exact?: boolean; limit?: number }) => {
+      handleFindProcess(name, options.exact, options.limit);
+  });
+
+program
+  .command('resize <input> <output>')
+  .description('Resize an image and adjust its quality.')
+  .option('-w, --width <number>', 'Target width in pixels')
+  .option('-h, --height <number>', 'Target height in pixels')
+  .option('-q, --quality <number>', 'Output quality (0-100)', '75')
+  .action(async (input: string, output: string, options: { width?: string; height?: string; quality?: string }) => {
+    try {
+      await resizeImagesCommand(input, output, options);
+    } catch (error) {
+      console.log((error as Error).message)
+    }
+  });
 
 program.addCommand(convertImageCommand);
 
@@ -66,9 +193,13 @@ program
 program
   .command('password')
   .description('Generate random password with options')
-  .action(() => {
-    OptionPassword();
-  });
+  .action(async () => {
+    try {
+      await OptionPassword();
+    } catch (error) {
+      console.log((error as Error).message)
+    }
+  })
 
 program
   .command("count <path>")
@@ -94,33 +225,124 @@ program
   .command('edit')
   .description('Edit a file')
   .action(async () => {
-    const filePath = readlineSync.question('Enter file path: ');
-    const content = await readFile(filePath);
-
-    console.log('=== File content ===');
-    content.forEach((line, index) => {
-      console.log(`${index + 1}: ${line}`);
-    });
-
-    const updatedContent = await editFile(content);
-    await saveFile(filePath, updatedContent);
-    console.log('File saved successfully.');
+    try {
+      const filePath = readlineSync.question("Enter file path: ");
+      const content = await readFile(filePath);
+      
+      console.log("=== File content ===");
+      content.forEach((line, index) => {
+        console.log(`${index + 1}: ${line}`);
+      });
+  
+      const updatedContent = await editFile(content);
+      await saveFile(filePath, updatedContent);  
+    } catch (error) {
+      console.log((error as Error).message)
+    }
   });
 
 program
   .command('clone <repoUrl>')
   .description('Clone a GitHub repository into the current directory')
-  .action(async (repoUrl) => {
+  .option('-g --git', 'use git')
+  .action(async (repoUrl, options) => {
+    if(!options.git) {
+      console.error('Please provide a git flag with -g or --git');
+      return;
+    }
+    await git.Clone(repoUrl);
+  });
+
+const branch = git.Branch;
+
+program
+  .command(branch.command)
+  .description(branch.description)
+  .option(branch.options[0].flag, branch.options[0].description)
+  .option(branch.options[1].flag, branch.options[1].description)
+  .option(branch.options[2].flag, branch.options[2].description) // flag git :v
+  .action(branch.action);
+
+program
+  .command('push')
+  .description('Push changes to the remote Git repository')
+  .option('-g --git', 'use git')
+  .action(async (options) => {
+    if(!options.git) {
+      console.error('Please provide a git flag with -g or --git');
+      return;
+    }
+    await git.Push();
+});
+
+program
+  .command('pull')
+  .description('Pull changes from the remote Git repository')
+  .option('-g --git', 'use git')
+  .action(async (options) => {
+    if(!options.git) {
+      console.error('Please provide a git flag with -g or --git');
+      return;
+    }
+    await git.Pull();
+});
+
+program
+  .command('log')
+  .description('Show the commit history of the Git repository')
+  .option('-g --git', 'use git')
+  .action(async (options) => {
+    if(!options.git) {
+      console.error('Please provide a git flag with -g or --git');
+      return;
+    }
+    await git.Log();
+  });
+
+program
+  .command('status')
+  .description('Show the working tree status')
+  .option('-g --git', 'use git')
+  .action(async (options) => {
+    if(!options.git) {
+      console.error('Please provide a git flag with -g or --git');
+      return;
+    }
+    await git.Status();
+  });
+
+  program
+  .command('search')
+  .description('Search for files or directories matching the query or extension')
+  .option('-d, --dir <directory>', 'Specify the directory to search in', '.')
+  .option('-e, --extension <ext>', 'Search for files with a specific extension')
+  .option('-q, --query <query>', 'Search for files or directories matching the query')
+  .action(async (options) => {
     try {
-      console.log(`Cloning repository from ${repoUrl} into the current directory...`);
-      await git.clone(repoUrl);
-      console.log('Successfully cloned the repository into the current directory');
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error('Error cloning the repository:', error.message);
+      const searchDir = options.dir;
+      const extension = options.extension;
+      const query = options.query;
+
+      console.log(`Searching in ${searchDir}...`);
+      if (extension) console.log(`Filtering by extension .${extension}`);
+      if (query) console.log(`Filtering by query "${query}"`);
+
+      const files = await profs.readdir(searchDir, { withFileTypes: true });
+      const results = files.filter(file => {
+        const matchesQuery = query ? file.name.includes(query) : true;
+        const matchesExtension = extension ? file.name.endsWith(`.${extension}`) : true;
+        return matchesQuery && matchesExtension;
+      });
+
+      if (results.length > 0) {
+        results.forEach(file => {
+          console.log(`${file.isDirectory() ? '📁' : '📄'} ${path.join(searchDir, file.name)}`);
+        });
       } else {
-        console.error('An unknown error occurred while cloning the repository:', error);
+        console.log('No results found.');
       }
+    } catch (error) {
+      console.error('Error searching:', error);
     }
   });
 

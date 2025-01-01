@@ -9,7 +9,7 @@ export const getWeatherCommand = {
   action: async (options: { city: string }) => {
     if (!options.city) {
       console.error('Please provide a city name with --city');
-      return; 
+      return;
     }
     try {
       const weatherData = await getWeather(options.city);
@@ -19,7 +19,6 @@ export const getWeatherCommand = {
       console.log(`Humidity: ${weatherData.main.humidity}%`);
     } catch (error) {
       console.error('Error fetching weather data:', (error as Error).message);
-      throw error;
     }
   }
 };

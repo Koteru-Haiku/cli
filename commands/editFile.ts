@@ -1,6 +1,5 @@
-import * as fs from 'fs/promises';
-import readlineSync from 'readline-sync';
-import { handleAnswer } from '../util/Handle.js';
+import readlineSync from "readline-sync";
+import { handleAnswer } from "../utils/Handle.js";
 
 export async function readFile(filePath: string): Promise<string[]> {
   try {
