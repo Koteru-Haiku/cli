@@ -61,18 +61,3 @@ export class LightNovelDownloader {
         }
     }
 }
-
-const program = new Command();
-
-program
-    .version('1.0.0')
-    .description('A CLI tool to download light novels from ln.hako.vn or other domains')
-    .requiredOption('-u, --url <url>', 'URL of the light novel to download')
-    .option('-d, --domain <domain>', 'Domain to download from (default: ln.hako.vn)', 'ln.hako.vn')
-    .action(async (options) => {
-        const downloader = new LightNovelDownloader((message) => console.log(message));
-        downloader.setupDomain(options.domain);
-        await downloader.downloadLightNovel(options.url);
-    });
-
-program.parse(process.argv);
