@@ -18,7 +18,6 @@ import { resizeImagesCommand } from '../commands/image/imageresize.js'
 import { readFile, saveFile } from "../utils/fileprocess.js";
 import { editFile } from "../commands/editFile.js";
 import readlineSync from "readline-sync";
-import simpleGit from 'simple-git';
 import packageJson from 'package-json';
 import { execSync } from 'child_process';
 import { listProcesses } from '../commands/system/listProccesses.js';
@@ -32,6 +31,7 @@ import { ListBookMarks } from '../commands/bookmarks/listBookmarks.js'
 import { AddBookMarks } from '../commands/bookmarks/addBookmarks.js'
 import { searchCharacter } from '../commands/anime/searchCharacter.js'
 import { searchAnime } from '../commands/anime/searchAnime.js'
+import { createGIF } from '../commands/image/creategif.js'
 import * as git from '../commands/git/git.js'
 
 const program = new Command();
@@ -40,6 +40,24 @@ program
   .name('haiku')
   .description('A custom CLI tool for special tasks')
   .version(`${VERSION}`, '-v, --version', 'Show current version of Haiku CLI');
+
+program
+  .command('create-gif <inputFolder> <outputFile>')
+  .description('Create a GIF from multiple images in a folder')
+  .option('-d --delay <number>', 'Delay between frames in milliseconds', '100')
+  .option('-w --width <number>', 'Width of the GIF', '500')
+  .option('-h --height <number>', 'Height of the GIF', '500')
+  .action(async (inputFolder, outputFile, options) => {
+    try {
+      await createGIF(inputFolder, outputFile, {
+        delay: parseInt(options.delay),
+        width: parseInt(options.width),
+        height: parseInt(options.height),
+      });
+    } catch (error) {
+      console.error('Error creating GIF:', (error as Error).message);
+    } 
+  });
 
 program
   .command('anime')
