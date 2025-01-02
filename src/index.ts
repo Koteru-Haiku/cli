@@ -56,13 +56,27 @@ program
   .option('-l, --limit <number>', 'Limit the number of results displayed', parseInt) 
   .action(async (options) => {
     try {
-      // console.log(options);
+      console.log(options);
+      if (!options.url && !options.search && !options.includeTags && !options.excludeTags) {
+        console.log(chalk.yellow('Please provide at least one option.'));
+        console.log(chalk.whiteBright('Usage:'));
+        console.log(chalk.whiteBright(`  --url with --platform`));
+        console.log(chalk.whiteBright(`  --search with --limit`));
+        console.log(chalk.whiteBright(`  --include-tags with --exclude-tags with --limit`));
+        return;
+      }
+
       if(options.url) {
         const downloader = new TruyenDexImageDownloader((message) => console.log(message));
         downloader.setupTitle(options.platform);
         await downloader.downloadManga(options.url);
       }
-      if(options.search || options.includeTags || options.excludeTags) {
+      else if(options.search) {
+        const results = await manga.searchOnlyManga(options.search);
+        const limit = options.limit || results.length; 
+        manga.displayMangaResults(results.slice(0, limit));
+      }
+      else if(options.includeTags || options.excludeTags) {
         const includedTags = options.includeTags
                 ? await manga.getTagIDs(options.includeTags.split(','))
                 : undefined;
@@ -79,6 +93,12 @@ program
 
         const limit = options.limit || results.length; 
         manga.displayMangaResults(results.slice(0, limit));
+      }
+      else {
+        console.log(chalk.whiteBright('Usage:'));
+        console.log(chalk.whiteBright(`  --url with --platform`));
+        console.log(chalk.whiteBright(`  --search with --limit`));
+        console.log(chalk.whiteBright(`  --include-tags with --exclude-tags with --limit`));
       }
     } catch(error) {
       console.error('Error:', (error as Error).message);
