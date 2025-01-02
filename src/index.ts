@@ -8,7 +8,7 @@ import { showVersion } from '../commands/version.js';
 import { qrCommand } from '../commands/qr.js'; 
 import { welcome } from '../commands/info.js';
 import { OptionPassword } from '../commands/password.js'
-import { VERSION } from '../constants/version.js';
+import { VERSION } from '../constants/Version.js';
 import { countFilesAndFoldersShallow } from '../commands/countfiles/countfiles.js'
 import { countFilesAndFoldersDeep } from '../commands/countfiles/countfilesdeep.js'
 import { getWeatherCommand } from '../commands/getweather.js'
@@ -22,7 +22,7 @@ import packageJson from 'package-json';
 import { execSync } from 'child_process';
 import { listProcesses } from '../commands/system/listProccesses.js';
 import { killProcess } from '../commands/system/killProcess.js';
-import { monitorProcess } from '../utils/processUtils.js';
+import { monitorProcess } from '../utils/ProcessUtils.js';
 import { handleFindProcess } from '../commands/system/findProcess.js'
 import { getNetworkInfo } from '../commands/networkInfo.js'
 import { encryptFile } from '../commands/code/encrypt.js';
