@@ -1,5 +1,5 @@
 import { createCipheriv, createDecipheriv } from 'crypto';
-import { ENCRYPTION_KEY, ENCRYPTION_IV } from '../constants/config.js';
+import { ENCRYPTION_KEY, ENCRYPTION_IV } from '../constants/Config.js';
 
 const key = Buffer.from(ENCRYPTION_KEY, 'hex');
 const iv = Buffer.from(ENCRYPTION_IV, 'hex');

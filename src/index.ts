@@ -4,35 +4,35 @@ import fs, { promises as profs } from 'fs'
 import path from 'path';
 import chalk from 'chalk';
 import { Command } from 'commander';
-import { showVersion } from '../commands/version.js';
-import { qrCommand } from '../commands/qr.js'; 
-import { welcome } from '../commands/info.js';
-import { OptionPassword } from '../commands/password.js'
+import { showVersion } from '../commands/Version.js';
+import { qrCommand } from '../commands/QR.js'; 
+import { welcome } from '../commands/Info.js';
+import { OptionPassword } from '../commands/Password.js'
 import { VERSION } from '../constants/Version.js';
-import { countFilesAndFoldersShallow } from '../commands/countfiles/countfiles.js'
-import { countFilesAndFoldersDeep } from '../commands/countfiles/countfilesdeep.js'
-import { getWeatherCommand } from '../commands/getweather.js'
-import { monitorSystemCommand } from '../commands/monitorSystem.js';
-import { convertImageCommand } from '../commands/convertImage.js'
-import { resizeImagesCommand } from '../commands/image/imageresize.js'
-import { readFile, saveFile } from "../utils/fileprocess.js";
-import { editFile } from "../commands/editFile.js";
+import { countFilesAndFoldersShallow } from '../commands/files/Countfiles.js'
+import { countFilesAndFoldersDeep } from '../commands/files/Countfilesdeep.js'
+import { getWeatherCommand } from '../commands/Getweather.js'
+import { monitorSystemCommand } from '../commands/system/MonitorSystem.js';
+import { convertImageCommand } from '../commands/image/ConvertImage.js'
+import { resizeImagesCommand } from '../commands/image/ImageResize.js'
+import { readFile, saveFile } from "../utils/FileProcess.js";
+import { editFile } from "../commands/files/EditFile.js";
 import readlineSync from "readline-sync";
 import packageJson from 'package-json';
 import { execSync } from 'child_process';
-import { listProcesses } from '../commands/system/listProccesses.js';
-import { killProcess } from '../commands/system/killProcess.js';
+import { listProcesses } from '../commands/system/ListProccesses.js';
+import { killProcess } from '../commands/system/KillProcess.js';
 import { monitorProcess } from '../utils/ProcessUtils.js';
-import { handleFindProcess } from '../commands/system/findProcess.js'
-import { getNetworkInfo } from '../commands/networkInfo.js'
-import { encryptFile } from '../commands/code/encrypt.js';
-import { decryptFile } from '../commands/code/decrypt.js';
-import { ListBookMarks } from '../commands/bookmarks/listBookmarks.js'
-import { AddBookMarks } from '../commands/bookmarks/addBookmarks.js'
-import { searchCharacter } from '../commands/anime/searchCharacter.js'
-import { searchAnime } from '../commands/anime/searchAnime.js'
-import { createGIF } from '../commands/image/creategif.js'
-import * as git from '../commands/git/git.js'
+import { handleFindProcess } from '../commands/system/FindProcess.js'
+import { getNetworkInfo } from '../commands/system/NetworkInfo.js'
+import { encryptFile } from '../commands/code/Encrypt.js';
+import { decryptFile } from '../commands/code/Decrypt.js';
+import { ListBookMarks } from '../commands/bookmarks/ListBookmarks.js'
+import { AddBookMarks } from '../commands/bookmarks/AddBookmarks.js'
+import { searchCharacter } from '../commands/anime/SearchCharacter.js'
+import { searchAnime } from '../commands/anime/SearchAnime.js'
+import { createGIF } from '../commands/image/CreateGif.js'
+import * as git from '../commands/git/Git.js'
 import { TruyenDexImageDownloader } from '../public/manga/MangaDexAPI.js'
 import { LightNovelDownloader } from '../public/lightnovel/LightNovel.js'
 
