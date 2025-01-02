@@ -111,3 +111,28 @@ export function displayMangaResults(mangaList: FilteredManga[]) {
         }
     });
 }
+
+export async function searchOnlyManga(title: string): Promise<FilteredManga[]> {
+    const baseUrl = BASE_URL_MANGADEX;
+
+    try {
+        const response = await axios.get(`${baseUrl}/manga`, {
+            params: { title },
+        });
+
+        if (!response.data.data || !Array.isArray(response.data.data)) {
+            console.log(chalk.yellow('No manga found.'));
+            return [];
+        }
+
+        const filteredData = response.data.data.map((manga: Manga) =>
+            filterMangaData(manga)
+        );
+
+        // displayMangaResults(filteredData);
+        return filteredData;
+    } catch (error) {
+        console.error(chalk.red('Failed to search manga:'), (error as Error).message);
+        throw error;
+    }
+}
