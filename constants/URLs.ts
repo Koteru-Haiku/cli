@@ -1,0 +1,1 @@
+export const API_URL_ANILIST = 'https://graphql.anilist.co';
