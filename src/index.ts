@@ -35,6 +35,7 @@ import { createGIF } from '../commands/image/CreateGif.js'
 import * as git from '../commands/git/Git.js'
 import { TruyenDexImageDownloader } from '../public/manga/MangaDexAPI.js'
 import { LightNovelDownloader } from '../public/lightnovel/LightNovel.js'
+import * as themes from '../commands/Theme.js'
 
 const program = new Command();
 
@@ -99,6 +100,36 @@ program
       }
     } catch (error) {
       console.error('Error searching:', (error as Error).message);
+    }
+  });
+
+program
+  .command('theme')
+  .description('Configure themes for the CLI')
+  .option('--init', 'Initialize the themes directory')
+  .option('-i --install <themeName>', 'Install a theme')
+  .option('-l --list', 'List all installed themes')
+  .option('-a --apply <themeName>', 'Apply a theme')
+  .option('-d --delete <themeName>', 'Delete a theme')
+  .action((options, themeName) => {
+    try {
+      if(options.init) {
+        themes.initThemesDir();
+      }
+      if(options.install) {
+        themes.installTheme(themeName);
+      }
+      if(options.list) {
+        themes.listThemes();
+      }
+      if(options.apply) {
+        themes.applyTheme(themeName);
+      }
+      if(options.delete) {
+        themes.deleteTheme(themeName);
+      }
+    } catch(error) {
+      console.error('Error:', (error as Error).message);
     }
   });
 
