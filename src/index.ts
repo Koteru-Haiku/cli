@@ -36,6 +36,7 @@ import * as git from '../commands/git/Git.js'
 import { TruyenDexImageDownloader } from '../public/manga/MangaDexAPI.js'
 import { LightNovelDownloader } from '../public/lightnovel/LightNovel.js'
 import * as themes from '../commands/Theme.js'
+import * as manga from '../commands/manga/Manga.js'
 
 const program = new Command();
 
@@ -46,13 +47,42 @@ program
 
 program
   .command('manga')
-  .description('Download manga from MangaDex or TruyenDex')
-  .requiredOption('-u, --url <url>', 'URL of the manga to download')
+  .description('manga')
+  .option('-u, --url <url>', 'URL of the manga to download')
   .option('-p, --platform <platform>', 'Platform to download from (MangaDex or TruyenDex)', 'MangaDex')
+  .option('-s --search <name>', 'Search a manga')
+  .option('-i, --include-tags <tags>', 'Include manga with specific tags (comma-separated)')
+  .option('-e, --exclude-tags <tags>', 'Exclude manga with specific tags (comma-separated)')
+  .option('-l, --limit <number>', 'Limit the number of results displayed', parseInt) 
   .action(async (options) => {
-      const downloader = new TruyenDexImageDownloader((message) => console.log(message));
-      downloader.setupTitle(options.platform);
-      await downloader.downloadManga(options.url);
+    try {
+      // console.log(options);
+      if(options.url) {
+        const downloader = new TruyenDexImageDownloader((message) => console.log(message));
+        downloader.setupTitle(options.platform);
+        await downloader.downloadManga(options.url);
+      }
+      if(options.search || options.includeTags || options.excludeTags) {
+        const includedTags = options.includeTags
+                ? await manga.getTagIDs(options.includeTags.split(','))
+                : undefined;
+
+        const excludedTags = options.excludeTags
+            ? await manga.getTagIDs(options.excludeTags.split(','))
+            : undefined;
+
+        const results = await manga.searchManga({
+          title: options.title,
+          includedTags,
+          excludedTags,
+        });
+
+        const limit = options.limit || results.length; 
+        manga.displayMangaResults(results.slice(0, limit));
+      }
+    } catch(error) {
+      console.error('Error:', (error as Error).message);
+    }
   });
 
 program
