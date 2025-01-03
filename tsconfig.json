@@ -22,7 +22,8 @@
       "utils/**/*", 
       "services/**/*", 
       "types/**/*", 
-      "public/**/*"
+      "public/**/*",
+      "test/**/*"
     ],
     "exclude": ["node_modules", "**/*.spec.ts"]
   }

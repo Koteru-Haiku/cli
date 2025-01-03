@@ -38,11 +38,7 @@ import { LightNovelDownloader } from '../public/lightnovel/LightNovel.js'
 import * as themes from '../commands/Theme.js'
 import * as manga from '../commands/manga/Manga.js'
 import { convertToPdfCommand } from '../commands/convert/ConvertToPdf.js'
-
-import { AnimeFilter } from '../commands/anime/list/Filter.js'
-import {AnimeSearch} from '../commands/anime/list/Search.js'
-import { AnimeList } from '../commands/anime/list/List.js'
-import { AnimeUpdate } from '../commands/anime/list/Update.js'
+import { animeManager } from '../commands/anime/list/ListCommand.js'
 
 const program = new Command();
 
@@ -51,38 +47,7 @@ program
   .description('A custom CLI tool for special tasks')
   .version(`${VERSION}`, '-v, --version', 'Show current version of Haiku CLI');
 
-program
-  .command('anime-manager')
-  .description('Manage anime list')
-  .requiredOption('-f, --file <file>', 'File to read anime list from')
-  .option('--list', 'List all anime')
-  .option('--filter', 'Filter anime list')
-  .option('--finished', 'Filter finished anime')
-  .option('--unfinished', 'Filter unfinished anime')
-  .option('--search', 'Search anime by name or id')
-  .option('--name <name>', 'name anime')
-  .option('--id <id>', 'id anime')
-  .option('--update', 'Update the episode of an anime')
-  .option('--episode <episode>', 'Episode number')
-  .action((options) => {
-    console.log(options);
-    if(options.list) {
-      AnimeList(options.file);
-    }
-    else if(options.filter && (options.finished || options.unfinished)) {
-      AnimeFilter(options.file, options.finished, options.unfinished);
-    }
-    else if(options.search && (options.name || options.id)) {
-      AnimeSearch(options.file, options.name, options.id);
-    }
-    else if(options.update && options.id && (options.episode || options.finished)) {
-      AnimeUpdate(options.file, options.id, options.episode, options.finished);
-    }
-    else {
-      console.log("error commands");
-      // program.help();
-    }
-  });
+program.addCommand(animeManager);
 
 program
   .command('manga')
