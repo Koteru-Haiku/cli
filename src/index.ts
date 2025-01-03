@@ -37,6 +37,7 @@ import { TruyenDexImageDownloader } from '../public/manga/MangaDexAPI.js'
 import { LightNovelDownloader } from '../public/lightnovel/LightNovel.js'
 import * as themes from '../commands/Theme.js'
 import * as manga from '../commands/manga/Manga.js'
+import { convertToPdfCommand } from '../commands/convert/ConvertToPdf.js'
 
 const program = new Command();
 
@@ -279,6 +280,8 @@ program
   });
 
 program.addCommand(convertImageCommand);
+
+program.addCommand(convertToPdfCommand);
 
 program
   .command(getWeatherCommand.command) // thu cach viet moi :3
