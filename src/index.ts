@@ -40,10 +40,11 @@ import * as manga from '../commands/manga/Manga.js'
 import { convertToPdfCommand } from '../commands/convert/ConvertToPdf.js'
 
 import { AnimeFilter } from '../commands/anime/list/Filter.js'
-import {AnimeSearch} from '../commands/anime/list/Search.js'
+import { AnimeSearch } from '../commands/anime/list/Search.js'
 import { AnimeList } from '../commands/anime/list/List.js'
 import { AnimeUpdate } from '../commands/anime/list/Update.js'
 import { AnimeAdd } from '../commands/anime/list/Add.js'
+import { AnimeDelete } from '../commands/anime/list/Delete.js'
 
 const program = new Command();
 
@@ -66,6 +67,7 @@ program
   .option('--update', 'Update the episode of an anime')
   .option('--episode <episode>', 'Episode number')
   .option('--add', 'Add a new anime to the list')
+  .option('--delete', 'Delete an anime from the list')
   .action((options) => {
     console.log(options);
     if(options.list) {
@@ -83,9 +85,11 @@ program
     else if(options.add && options.name && options.episode) {
       AnimeAdd(options.file, options.name, options.episode);
     }
+    else if(options.delete && options.id) {
+      AnimeDelete(options.file, options.id);
+    }
     else {
       console.log("error commands");
-      // program.help();
     }
   });
 
