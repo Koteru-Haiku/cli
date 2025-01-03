@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import { Anime } from './Anime.js';
-import { readAnimeList } from '../../../utils/AnimeUtils.js';
+import { readAnimeList, PrintAnimeList } from '../../../utils/AnimeUtils.js';
 
 export const AnimeSearch = (path: string, name: string, id: string) => {
 
@@ -18,5 +18,7 @@ export const AnimeSearch = (path: string, name: string, id: string) => {
     if(result === undefined) {
       console.log("Anime not found");
     }
-    else console.log(result);
+    else {
+      PrintAnimeList(result);
+    }
 }
