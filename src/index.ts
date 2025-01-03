@@ -38,13 +38,7 @@ import { LightNovelDownloader } from '../public/lightnovel/LightNovel.js'
 import * as themes from '../commands/Theme.js'
 import * as manga from '../commands/manga/Manga.js'
 import { convertToPdfCommand } from '../commands/convert/ConvertToPdf.js'
-
-import { AnimeFilter } from '../commands/anime/list/Filter.js'
-import { AnimeSearch } from '../commands/anime/list/Search.js'
-import { AnimeList } from '../commands/anime/list/List.js'
-import { AnimeUpdate } from '../commands/anime/list/Update.js'
-import { AnimeAdd } from '../commands/anime/list/Add.js'
-import { AnimeDelete } from '../commands/anime/list/Delete.js'
+import { animeManager } from '../commands/anime/list/ListCommand.js'
 
 const program = new Command();
 
@@ -52,69 +46,6 @@ program
   .name('haiku')
   .description('A custom CLI tool for special tasks')
   .version(`${VERSION}`, '-v, --version', 'Show current version of Haiku CLI');
-
-const animeManager = new Command('anime-manager')
-  .description('Manage your anime list')
-  .requiredOption('-f, --file <file>', 'Path to anime.json');
-
-animeManager
-  .command('list')
-  .description('List all anime')
-  .action(() => {
-    const parentOptions = animeManager.opts();
-    AnimeList(parentOptions.file);
-  });
-
-animeManager
-  .command('filter')
-  .description('Filter anime list by status')
-  .option('--finished', 'Filter finished anime')
-  .option('--unfinished', 'Filter unfinished anime')
-  .action((options, command) => {
-    const parentOptions = command.parent.opts();
-    AnimeFilter(parentOptions.file, options.finished, options.unfinished);
-  });
-
-animeManager
-  .command('search')
-  .description('Search anime by name or id')
-  .option('--name <name>', 'Search by name')
-  .option('--id <id>', 'Search by id')
-  .action((options, command) => {
-    const parentOptions = command.parent.opts();
-    AnimeSearch(parentOptions.file, options.name, options.id);
-  });
-
-animeManager
-  .command('update')
-  .description('Update the episode or status of an anime')
-  .requiredOption('--id <id>', 'ID of the anime to update')
-  .option('--episode <episode>', 'Episode number')
-  .option('--finished <finished>', 'Mark anime as finished (true/false)')
-  .action((options, command) => {
-    const parentOptions = command.parent.opts();
-    AnimeUpdate(parentOptions.file, options.id, options.episode, options.finished);
-  });
-
-  animeManager
-  .command('add')
-  .description('Add a new anime to the list')
-  .requiredOption('--name <name>', 'Name of the anime')
-  .requiredOption('--episode <episode>', 'Current watching episode')
-  .option('--finished <finished>', 'Mark anime as finished (true/false)', 'false')
-  .action((options, command) => {
-    const parentOptions = command.parent.opts();
-    AnimeAdd(parentOptions.file, options.name, options.episode, options.finished);
-  });
-
-animeManager
-  .command('delete')
-  .description('Delete an anime from the list')
-  .requiredOption('--id <id>', 'ID of the anime to delete')
-  .action((options, command) => {
-    const parentOptions = command.parent.opts();
-    AnimeDelete(parentOptions.file, options.id);
-  });
 
 program.addCommand(animeManager);
 
