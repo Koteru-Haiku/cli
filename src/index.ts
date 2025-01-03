@@ -53,45 +53,70 @@ program
   .description('A custom CLI tool for special tasks')
   .version(`${VERSION}`, '-v, --version', 'Show current version of Haiku CLI');
 
-program
-  .command('anime-manager')
-  .description('Manage anime list')
-  .requiredOption('-f, --file <file>', 'File to read anime list from')
-  .option('--list', 'List all anime')
-  .option('--filter', 'Filter anime list')
+const animeManager = new Command('anime-manager')
+  .description('Manage your anime list')
+  .requiredOption('-f, --file <file>', 'Path to anime.json');
+
+animeManager
+  .command('list')
+  .description('List all anime')
+  .action(() => {
+    const parentOptions = animeManager.opts();
+    AnimeList(parentOptions.file);
+  });
+
+animeManager
+  .command('filter')
+  .description('Filter anime list by status')
   .option('--finished', 'Filter finished anime')
   .option('--unfinished', 'Filter unfinished anime')
-  .option('--search', 'Search anime by name or id')
-  .option('--name <name>', 'name anime')
-  .option('--id <id>', 'id anime')
-  .option('--update', 'Update the episode of an anime')
-  .option('--episode <episode>', 'Episode number')
-  .option('--add', 'Add a new anime to the list')
-  .option('--delete', 'Delete an anime from the list')
-  .action((options) => {
-    console.log(options);
-    if(options.list) {
-      AnimeList(options.file);
-    }
-    else if(options.filter && (options.finished || options.unfinished)) {
-      AnimeFilter(options.file, options.finished, options.unfinished);
-    }
-    else if(options.search && (options.name || options.id)) {
-      AnimeSearch(options.file, options.name, options.id);
-    }
-    else if(options.update && options.id && (options.episode || options.finished)) {
-      AnimeUpdate(options.file, options.id, options.episode, options.finished);
-    }
-    else if(options.add && options.name && options.episode) {
-      AnimeAdd(options.file, options.name, options.episode);
-    }
-    else if(options.delete && options.id) {
-      AnimeDelete(options.file, options.id);
-    }
-    else {
-      console.log("error commands");
-    }
+  .action((options, command) => {
+    const parentOptions = command.parent.opts();
+    AnimeFilter(parentOptions.file, options.finished, options.unfinished);
   });
+
+animeManager
+  .command('search')
+  .description('Search anime by name or id')
+  .option('--name <name>', 'Search by name')
+  .option('--id <id>', 'Search by id')
+  .action((options, command) => {
+    const parentOptions = command.parent.opts();
+    AnimeSearch(parentOptions.file, options.name, options.id);
+  });
+
+animeManager
+  .command('update')
+  .description('Update the episode or status of an anime')
+  .requiredOption('--id <id>', 'ID of the anime to update')
+  .option('--episode <episode>', 'Episode number')
+  .option('--finished <finished>', 'Mark anime as finished (true/false)')
+  .action((options, command) => {
+    const parentOptions = command.parent.opts();
+    AnimeUpdate(parentOptions.file, options.id, options.episode, options.finished);
+  });
+
+  animeManager
+  .command('add')
+  .description('Add a new anime to the list')
+  .requiredOption('--name <name>', 'Name of the anime')
+  .requiredOption('--episode <episode>', 'Current watching episode')
+  .option('--finished <finished>', 'Mark anime as finished (true/false)', 'false')
+  .action((options, command) => {
+    const parentOptions = command.parent.opts();
+    AnimeAdd(parentOptions.file, options.name, options.episode, options.finished);
+  });
+
+animeManager
+  .command('delete')
+  .description('Delete an anime from the list')
+  .requiredOption('--id <id>', 'ID of the anime to delete')
+  .action((options, command) => {
+    const parentOptions = command.parent.opts();
+    AnimeDelete(parentOptions.file, options.id);
+  });
+
+program.addCommand(animeManager);
 
 program
   .command('manga')
