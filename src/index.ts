@@ -43,6 +43,7 @@ import { AnimeFilter } from '../commands/anime/list/Filter.js'
 import {AnimeSearch} from '../commands/anime/list/Search.js'
 import { AnimeList } from '../commands/anime/list/List.js'
 import { AnimeUpdate } from '../commands/anime/list/Update.js'
+import { AnimeAdd } from '../commands/anime/list/Add.js'
 
 const program = new Command();
 
@@ -64,6 +65,7 @@ program
   .option('--id <id>', 'id anime')
   .option('--update', 'Update the episode of an anime')
   .option('--episode <episode>', 'Episode number')
+  .option('--add', 'Add a new anime to the list')
   .action((options) => {
     console.log(options);
     if(options.list) {
@@ -77,6 +79,9 @@ program
     }
     else if(options.update && options.id && (options.episode || options.finished)) {
       AnimeUpdate(options.file, options.id, options.episode, options.finished);
+    }
+    else if(options.add && options.name && options.episode) {
+      AnimeAdd(options.file, options.name, options.episode);
     }
     else {
       console.log("error commands");
