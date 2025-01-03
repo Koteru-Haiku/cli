@@ -1,4 +1,6 @@
-import { readAnimeList, writeAnimeList } from '../../../utils/AnimeUtils.js';
+import { readAnimeList, writeAnimeList, PrintAnimeList } from '../../../utils/AnimeUtils.js';
+import { Anime } from './Anime.js';
+import chalk from 'chalk';
 
 export const AnimeAdd = 
   (
@@ -13,7 +15,7 @@ export const AnimeAdd =
 
   const newId = animeList.length > 0 ? Math.max(...animeList.map((anime) => anime.id)) + 1 : 1;
 
-  const newAnime = {
+  const newAnime : Anime = {
     id: newId,
     name,
     watchingEpisode,
@@ -23,5 +25,6 @@ export const AnimeAdd =
   animeList.unshift(newAnime);
 
   writeAnimeList(path, animeList);
-  console.log('Anime added successfully:', newAnime);
+  console.log(chalk.green('Anime added successfully:'));
+  PrintAnimeList(newAnime);
 };
