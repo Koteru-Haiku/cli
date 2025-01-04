@@ -4,35 +4,40 @@ import fs, { promises as profs } from 'fs'
 import path from 'path';
 import chalk from 'chalk';
 import { Command } from 'commander';
-import { showVersion } from '../commands/version.js';
-import { qrCommand } from '../commands/qr.js'; 
-import { welcome } from '../commands/info.js';
-import { OptionPassword } from '../commands/password.js'
-import { VERSION } from '../constants/version.js';
-import { countFilesAndFoldersShallow } from '../commands/countfiles/countfiles.js'
-import { countFilesAndFoldersDeep } from '../commands/countfiles/countfilesdeep.js'
-import { getWeatherCommand } from '../commands/getweather.js'
-import { monitorSystemCommand } from '../commands/monitorSystem.js';
-import { convertImageCommand } from '../commands/convertImage.js'
-import { resizeImagesCommand } from '../commands/image/imageresize.js'
-import { readFile, saveFile } from "../utils/fileprocess.js";
-import { editFile } from "../commands/editFile.js";
+import { showVersion } from '../commands/Version.js';
+import { qrCommand } from '../commands/QR.js'; 
+import { welcome } from '../commands/Info.js';
+import { OptionPassword } from '../commands/Password.js'
+import { VERSION } from '../constants/Version.js';
+import { countFilesAndFoldersShallow } from '../commands/files/Countfiles.js'
+import { countFilesAndFoldersDeep } from '../commands/files/Countfilesdeep.js'
+import { getWeatherCommand } from '../commands/Getweather.js'
+import { monitorSystemCommand } from '../commands/system/MonitorSystem.js';
+import { convertImageCommand } from '../commands/image/ConvertImage.js'
+import { resizeImagesCommand } from '../commands/image/ImageResize.js'
+import { readFile, saveFile } from "../utils/FileProcess.js";
+import { editFile } from "../commands/files/EditFile.js";
 import readlineSync from "readline-sync";
-import simpleGit from 'simple-git';
 import packageJson from 'package-json';
 import { execSync } from 'child_process';
-import { listProcesses } from '../commands/system/listProccesses.js';
-import { killProcess } from '../commands/system/killProcess.js';
-import { monitorProcess } from '../utils/processUtils.js';
-import { handleFindProcess } from '../commands/system/findProcess.js'
-import { getNetworkInfo } from '../commands/networkInfo.js'
-import { encryptFile } from '../commands/code/encrypt.js';
-import { decryptFile } from '../commands/code/decrypt.js';
-import { ListBookMarks } from '../commands/bookmarks/listBookmarks.js'
-import { AddBookMarks } from '../commands/bookmarks/addBookmarks.js'
-import { searchCharacter } from '../commands/anime/searchCharacter.js'
-import { searchAnime } from '../commands/anime/searchAnime.js'
-import * as git from '../commands/git/git.js'
+import { listProcesses } from '../commands/system/ListProccesses.js';
+import { killProcess } from '../commands/system/KillProcess.js';
+import { monitorProcess } from '../utils/ProcessUtils.js';
+import { handleFindProcess } from '../commands/system/FindProcess.js'
+import { getNetworkInfo } from '../commands/system/NetworkInfo.js'
+import { encryptFile } from '../commands/code/Encrypt.js';
+import { decryptFile } from '../commands/code/Decrypt.js';
+import { ListBookMarks } from '../commands/bookmarks/ListBookmarks.js'
+import { AddBookMarks } from '../commands/bookmarks/AddBookmarks.js'
+import { searchCharacter } from '../commands/anime/SearchCharacter.js'
+import { searchAnime } from '../commands/anime/SearchAnime.js'
+import { createGIF } from '../commands/image/CreateGif.js'
+import * as git from '../commands/git/Git.js'
+import { LightNovelDownloader } from '../public/lightnovel/LightNovel.js'
+import * as themes from '../commands/Theme.js'
+import { convertToPdfCommand } from '../commands/convert/ConvertToPdf.js'
+import { animeManager } from '../commands/anime/list/ListCommand.js'
+import { mangaCommand } from '../commands/manga/MangaCommand.js';
 
 const program = new Command();
 
@@ -40,6 +45,39 @@ program
   .name('haiku')
   .description('A custom CLI tool for special tasks')
   .version(`${VERSION}`, '-v, --version', 'Show current version of Haiku CLI');
+
+program.addCommand(animeManager);
+
+program.addCommand(mangaCommand);
+
+program
+  .command('ln')
+  .description('Download light novels to txt files')
+  .requiredOption('-u, --url <url>', 'URL of the light novel to download')
+  .option('-d, --domain <domain>', 'Domain to download from (default: ln.hako.vn)', 'ln.hako.vn')
+  .action(async (options) => {
+      const downloader = new LightNovelDownloader((message) => console.log(message));
+      downloader.setupDomain(options.domain);
+      await downloader.downloadLightNovel(options.url);
+  });
+
+program
+  .command('create-gif <inputFolder> <outputFile>')
+  .description('Create a GIF from multiple images in a folder')
+  .option('-d --delay <number>', 'Delay between frames in milliseconds', '100')
+  .option('-w --width <number>', 'Width of the GIF', '500')
+  .option('-h --height <number>', 'Height of the GIF', '500')
+  .action(async (inputFolder, outputFile, options) => {
+    try {
+      await createGIF(inputFolder, outputFile, {
+        delay: parseInt(options.delay),
+        width: parseInt(options.width),
+        height: parseInt(options.height),
+      });
+    } catch (error) {
+      console.error('Error creating GIF:', (error as Error).message);
+    } 
+  });
 
 program
   .command('anime')
@@ -61,10 +99,39 @@ program
   });
 
 program
+  .command('theme')
+  .description('Configure themes for the CLI')
+  .option('--init', 'Initialize the themes directory')
+  .option('-i --install <themeName>', 'Install a theme')
+  .option('-l --list', 'List all installed themes')
+  .option('-a --apply <themeName>', 'Apply a theme')
+  .option('-d --delete <themeName>', 'Delete a theme')
+  .action((options, themeName) => {
+    try {
+      if(options.init) {
+        themes.initThemesDir();
+      }
+      if(options.install) {
+        themes.installTheme(themeName);
+      }
+      if(options.list) {
+        themes.listThemes();
+      }
+      if(options.apply) {
+        themes.applyTheme(themeName);
+      }
+      if(options.delete) {
+        themes.deleteTheme(themeName);
+      }
+    } catch(error) {
+      console.error('Error:', (error as Error).message);
+    }
+  });
+
+program
   .command('add <name> <url>')
   .description('Add a new bookmark')
-  .option('-t, --tags <tags>', 'Add tags to the bookmark (comma-separated)')
-  .action(async (name, url, options) => {
+  .action(async (name, url) => {
     try {
       await AddBookMarks(name, url);
     } catch (error) {
@@ -158,6 +225,8 @@ program
 
 program.addCommand(convertImageCommand);
 
+program.addCommand(convertToPdfCommand);
+
 program
   .command(getWeatherCommand.command)
   .description(getWeatherCommand.description)
@@ -203,7 +272,7 @@ program
 
 program
   .command("count <path>")
-  .option("--d", "Recursively count files and folders in subdirectories")
+  .option("-d --deep", "Recursively count files and folders in subdirectories")
   .description("Count files and folders in a directory")
   .action(async (path, options) => {
     try {

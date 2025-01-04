@@ -1,5 +1,5 @@
 import readlineSync from "readline-sync";
-import { handleAnswer } from "../utils/Handle.js";
+import { handleAnswer } from "../../utils/Handle.js";
 
 export async function readFile(filePath: string): Promise<string[]> {
   try {
