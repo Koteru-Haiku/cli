@@ -8,6 +8,13 @@ export class TruyenDexImageDownloader {
     constructor(private logger: (message: string) => void) {}
 
     public setupTitle(option: string): void {
+        if(option.toLowerCase() === "mangadex") {
+            option = "MangaDex";
+        }
+        else if(option.toLowerCase() === "truyendex") {
+            option = "TruyenDex";
+        }
+
         if (option === "MangaDex") {
             this.title = "title";
         } else if (option === "TruyenDex") {
