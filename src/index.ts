@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import fs, { promises as profs } from 'fs'
+import { promises as profs } from 'fs'
 import path from 'path';
 import chalk from 'chalk';
 import { Command } from 'commander';
@@ -38,6 +38,7 @@ import * as themes from '../commands/Theme.js'
 import { convertToPdfCommand } from '../commands/convert/ConvertToPdf.js'
 import { animeManager } from '../commands/anime/list/ListCommand.js'
 import { mangaCommand } from '../commands/manga/MangaCommand.js';
+import * as utils from '../utils/Utils.js'
 
 const program = new Command();
 
@@ -376,7 +377,7 @@ program
     await git.Status();
   });
 
-  program
+program
   .command('search')
   .description('Search for files or directories matching the query or extension')
   .option('-d, --dir <directory>', 'Specify the directory to search in', '.')
@@ -401,13 +402,13 @@ program
 
       if (results.length > 0) {
         results.forEach(file => {
-          console.log(`${file.isDirectory() ? '📁' : '📄'} ${path.join(searchDir, file.name)}`);
+          console.log(`${utils.getFolderAndFileSymbol(file.isDirectory())} ${path.join(searchDir, file.name)}`);
         });
       } else {
-        console.log('No results found.');
+        console.log(chalk.red('No results found'));
       }
     } catch (error) {
-      console.error('Error searching:', error);
+      console.error(chalk.red('Error searching:', (error as Error).message));
     }
   });
 
