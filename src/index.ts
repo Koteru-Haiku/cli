@@ -39,6 +39,8 @@ import { convertToPdfCommand } from '../commands/convert/ConvertToPdf.js'
 import { animeManager } from '../commands/anime/list/ListCommand.js'
 import { mangaCommand } from '../commands/manga/MangaCommand.js';
 import * as utils from '../utils/Utils.js'
+import { getKanji } from '../commands/kanji/KanjiCommand.js';
+import { KanjiStyle } from '../commands/kanji/Kanji.js';
 
 const program = new Command();
 
@@ -60,6 +62,33 @@ program
       const downloader = new LightNovelDownloader((message) => console.log(message));
       downloader.setupDomain(options.domain);
       await downloader.downloadLightNovel(options.url);
+  });
+
+program
+  .command('kanji')
+  .description('')
+  .option('-k --kanji <word>', 'Provides general information about the supplied kanji character')
+  .option('-r --reading <word>', 'Provides lists of kanji associated with the supplied reading')
+  .option('-w --words <word>', 'Provides a list of dictionary entries associated with the supplied kanji character')
+  .action(async (options) => {
+    const selectedOptions: string[] = Object.entries(options)
+    .filter(([_, value]) => value !== undefined)
+    .map(([key]) => key);
+    if (selectedOptions.length > 1) {
+      console.error(chalk.red(`Error, only select one option: ${selectedOptions.join(', ')}`));
+      process.exit(1);
+    }
+
+    const KanjiStyleMap: Record<string, KanjiStyle> = {
+      kanji: KanjiStyle.KANJI,
+      reading: KanjiStyle.READING,
+      words: KanjiStyle.WORDS,
+    };    
+
+    const optionType: string | undefined = Object.keys(options).find(key => options[key] !== undefined);
+    if (optionType) {
+      await getKanji(options[optionType], KanjiStyleMap[optionType]);
+    } 
   });
 
 program
