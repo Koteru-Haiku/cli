@@ -64,7 +64,7 @@ program
       await downloader.downloadLightNovel(options.url);
   });
 
-program
+const kanjiCommand: Command = program
   .command('kanji')
   .description('Retrieve information about Kanji characters, readings, and related words')
   .option('-k --kanji <word>', 'Provides general information about the supplied kanji character')
@@ -75,20 +75,29 @@ program
     .filter(([_, value]) => value !== undefined)
     .map(([key]) => key);
     if (selectedOptions.length > 1) {
+
       console.error(chalk.red(`Error, only select one option: ${selectedOptions.join(', ')}`));
-      process.exit(1);
+
+    } else if (selectedOptions.length === 0) {
+
+      kanjiCommand.outputHelp();
+
+    } else  {
+
+      const KanjiStyleMap: Record<string, KanjiStyle> = {
+        kanji: KanjiStyle.KANJI,
+        reading: KanjiStyle.READING,
+        words: KanjiStyle.WORDS,
+      };    
+
+      const optionType: string | undefined = Object.keys(options).find(key => options[key] !== undefined);
+      if (optionType) {
+
+        await getKanji(options[optionType], KanjiStyleMap[optionType]);
+      
+      } 
+
     }
-
-    const KanjiStyleMap: Record<string, KanjiStyle> = {
-      kanji: KanjiStyle.KANJI,
-      reading: KanjiStyle.READING,
-      words: KanjiStyle.WORDS,
-    };    
-
-    const optionType: string | undefined = Object.keys(options).find(key => options[key] !== undefined);
-    if (optionType) {
-      await getKanji(options[optionType], KanjiStyleMap[optionType]);
-    } 
   });
 
 program
