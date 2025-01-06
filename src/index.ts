@@ -66,7 +66,7 @@ program
 
 program
   .command('kanji')
-  .description('')
+  .description('Retrieve information about Kanji characters, readings, and related words')
   .option('-k --kanji <word>', 'Provides general information about the supplied kanji character')
   .option('-r --reading <word>', 'Provides lists of kanji associated with the supplied reading')
   .option('-w --words <word>', 'Provides a list of dictionary entries associated with the supplied kanji character')
