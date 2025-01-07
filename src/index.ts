@@ -102,7 +102,7 @@ const kanjiCommand: Command = program
   });
 
 program
-  .command('dic')
+  .command('dict')
   .description('Check if a word exists in the Vietnamese dictionary')
   .argument('<word>', 'The word to check in the dictionary')
   .action(async (word) => {
