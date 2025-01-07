@@ -1,11 +1,12 @@
 import chalk from 'chalk'
 import axios from 'axios';
+import { VIETNAMESE_DIC } from '../../constants/URLs.js';
 
-const base_url = 'https://vietnamese-dictionary-api.vercel.app'
+const base_url = VIETNAMESE_DIC; 
 
 const isValidWord = async (word: string): Promise<boolean | null> => {
     try {
-        const response = await axios.get(`${base_url}/api/search?word=${word}`)
+        const response = await axios.get(`${base_url}/search?word=${word}`)
         if(response.status === 200) {
             const data = response.data;
             return data.valid;
