@@ -105,23 +105,13 @@ program
   .command('dict')
   .description('Check if a word exists in the Vietnamese dictionary')
   .argument('<word>', 'The word to check in the dictionary')
-  .option('--suggestion')
+  .option('-s --suggestion')
   .action(async (word, options) => {
-    if (options) {
+    if (options.suggestion) { // key: suggestions
       await suggestionWord(word);
     }
     else {
-      const data = await isValidWord(word);
-        
-      if(data != null) {
-        if(data) {
-          console.log(chalk.green(`${word} is in the dictionary`));
-        }
-        else {
-          console.log(chalk.yellow(`${word} is not in the dictionary`));
-        }
-      }
-      else console.log(chalk.red('Invalid data or API error'));
+      await isValidWord(word);
     }
   });
 
