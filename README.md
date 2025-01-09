@@ -41,6 +41,7 @@ Or config in `package.json`
 then
 ```bash
 npm run build
+npm link
 your_cli_name <command> [options]
 ```
 ## License
