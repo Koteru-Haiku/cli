@@ -10,9 +10,12 @@
 
 - **Count Files and Folders**: Count files and folders in a directory.
 
-- **v.v.**
+- etc
 
 ## Installation
+
+> [!NOTE]
+> Make sure you have installed [Node.js](https://nodejs.org/en) and npm before proceeding.
 
 Clone the repository
 ```bash
@@ -38,12 +41,7 @@ Or config in `package.json`
 then
 ```bash
 npm run build
-node your_cli_name <command> [options]
+your_cli_name <command> [options]
 ```
-- [Features](#features)
-
-- [Installation](#installation)
-
-- [Usage](#usage)
-
-- [License](#license)
+## License
+Haiku CLI is open-source software licensed under the [MIT License](https://github.com/Koteru-Haiku/cli/blob/main/LICENSE)
