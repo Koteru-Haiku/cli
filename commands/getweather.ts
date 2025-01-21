@@ -32,7 +32,7 @@ export const getWeatherCommand = {
         return supportsEmoji ? '🌤️' : '~';
       };
 
-      console.log(`${chalk.yellow(`Weather in`)} ${chalk.green(weatherData.name)}:`);
+      console.log(`${chalk.yellow(`Weather in`)} ${chalk.green(weatherData.name)}, ${chalk.green(weatherData.sys.country)}:`);
       console.log(`Temperature: ${getTemperatureColor(weatherData.main.temp)}°C ${getTemperatureSymbol(weatherData.main.temp)}`);
       console.log(`Condition: ${chalk.cyan(weatherData.weather[0].description)}`);
       console.log(`Humidity: ${chalk.cyan(weatherData.main.humidity)}%`);
